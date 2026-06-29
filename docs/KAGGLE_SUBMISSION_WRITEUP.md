@@ -52,28 +52,24 @@ AP Copilot is architected as a linear 6-node graph using the **ADK 2.0 Workflow 
 
 ## 3. Demonstration of Core Competition Concepts
 
-AP Copilot successfully demonstrates **5 of the 6 official competition concepts**:
+AP Copilot demonstrates **3 core official competition concepts** (plus Antigravity orchestration):
 
 ### Concept 1: ADK 2.0 Workflow Multi-Agent Graph
 Built natively using `google.adk.workflow.Workflow`, `@node` decorators, and explicit conditional edge routing (`Edge(from_node=..., to_node=..., route=...)`). The framework manages event propagation and async state serialization.
 
-### Concept 2: MCP Server Integration
-Simulates ERP read/write tools and Model Context Protocol (MCP) interactions for vendor master verification, PO database lookups, and final NetSuite GL posting.
+### Concept 2: Portable Agent Skill (`SKILL.md`)
+Encapsulates company accounting policies, vendor GL mapping tables, fallback rules, and approval thresholds inside a modular `skills/ap_invoice_skill/SKILL.md` file, demonstrating how financial intelligence can be packaged and loaded dynamically at runtime.
 
-### Concept 3: Portable Agent Skill (`SKILL.md`)
-Encapsulates company accounting policies, vendor GL mapping tables, fallback rules, and approval thresholds inside a modular `skills/ap_invoice_skill/SKILL.md` file, demonstrating how financial intelligence can be packaged and reused across agents.
-
-### Concept 4: Security Features & Human-in-the-Loop Safety Rails
+### Concept 3: Security Features & Human-in-the-Loop Safety Rails
 Financial agents manage real money. AP Copilot enforces a strict **hard dollar ceiling ($5,000.00)** and duplicate protection. Flagged transactions suspend cleanly in memory via `RequestInput` and cannot write to NetSuite without explicit human approval.
 
-### Concept 5: Antigravity Development Orchestration
-Scaffolded and developed using Google Antigravity agent workflows, leveraging artifact-driven implementation planning (`implementation_plan.md` and `walkthrough.md`).
+*(Note: Google Antigravity framework orchestration is also demonstrated in the video walkthrough).*
 
 ---
 
 ## 4. Evaluation Benchmark & Statistical ROI Readout
 
-To validate AP Copilot under statistical rigor, an automated evaluation harness ([eval_harness.py](eval/eval_harness.py)) was executed across a randomized benchmark suite of **50 synthetic invoices** representing clean routine bills and dirty compliance edge cases.
+To validate AP Copilot under statistical rigor, an automated evaluation harness (`eval/eval_harness.py`) was executed across a randomized benchmark suite of **50 synthetic invoices** representing clean routine bills and dirty compliance edge cases.
 
 ### Benchmark Results (N=50 Synthetic Invoices):
 - **Total Invoices Evaluated:** 50

@@ -49,13 +49,12 @@ AP Copilot is structured as a linear 6-node ADK 2.0 `Workflow` graph threading s
 
 ---
 
-## 🎯 Competition Concepts Demonstrated (5 of 6 Named Concepts)
+## 🎯 Competition Concepts Demonstrated (3 Core Named Concepts)
 
 1. **ADK 2.0 Workflow Multi-Agent Graph:** Built natively using `google.adk.workflow.Workflow`, `@node` decorators, and explicit conditional routing (`Edge(from_node=..., to_node=..., route=...)`).
-2. **MCP Server Integration:** NetSuite ERP sandbox read/write tool backend simulation.
-3. **Agent Skills (`SKILL.md`):** Portable skill definition in `skills/ap_invoice_skill/SKILL.md` encapsulating GL mapping tables, keyword fallbacks, and policy thresholds.
-4. **Security & Human-in-the-Loop Safety Rails:** Hard **$5,000 auto-post dollar ceiling**, duplicate invoice prevention, and interactive `RequestInput` human gate.
-5. **Antigravity Development Orchestration:** Designed and scaffolded using Google Antigravity artifacts and execution logging.
+2. **Agent Skills (`SKILL.md`):** Portable skill definition in `skills/ap_invoice_skill/SKILL.md` encapsulating GL mapping tables, keyword fallbacks, and policy thresholds loaded dynamically at runtime.
+3. **Security & Human-in-the-Loop Safety Rails:** Hard **$5,000 auto-post dollar ceiling**, duplicate invoice prevention, and interactive `RequestInput` human gate.
+*(Note: Google Antigravity framework orchestration is also demonstrated in the video walkthrough).*
 
 ---
 
@@ -69,14 +68,17 @@ AP Copilot is structured as a linear 6-node ADK 2.0 `Workflow` graph threading s
 ```bash
 # Clone the repository
 git clone https://github.com/hectorluisalamo/ap-invoice-processor.git
-cd ap-invoice-processer
+cd ap-invoice-processor
 
 # Create and activate virtual environment
 python3 -m venv .venv
 source .venv/bin/activate
 
-# Install required dependencies
-pip install google-adk pydantic fastapi uvicorn pytest
+# Install pinned dependencies
+pip install -r requirements.txt
+
+# Export Gemini API Key (optional / for LLM vision parsing)
+export GEMINI_API_KEY="your_gemini_api_key_here"
 ```
 
 ---
