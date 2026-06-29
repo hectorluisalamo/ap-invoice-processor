@@ -68,7 +68,7 @@ Financial agents move real money, so the controls are hard, not advisory. A $5,0
 
 ### Concept 5: Antigravity
 
-I built AP Copilot in Google Antigravity, and I got there by elimination. I first tried to build the whole thing in a general-purpose coding agent (Claude Code) on my laptop. Claude struggled, probably since ADK 2.0 and the Antigravity workflow aren't in its training; it stopped to research nearly every step, hit walls, and troubleshot its way forward — a slowgoing process. I paused it and moved to Antigravity (the desktop app), which is purpose-built for exactly this stack.
+I built AP Copilot in Google Antigravity, and I got there by elimination. I first tried to build the whole thing in a general-purpose coding agent (Claude Code) on my laptop. Claude struggled, probably since ADK 2.0 and the Antigravity workflow aren't in its training; it stopped to research nearly every step, hit walls, and troubleshot its way forward — a slow-going process. I paused it and moved to Antigravity (the desktop app), which is purpose-built for exactly this stack.
 
 There the workflow was the opposite of a slog. I created a project, dropped in my `PLAN.md` and `BUILD.md` (created with Claude Code), and fed Antigravity my intent: "build a linear ADK agent graph: one invoice in → one posted GL entry out, with a human gate on anything risky." Antigravity produced an implementation plan ([`round1_initial_build/implementation_plan_v1.md`](round1_initial_build/implementation_plan_v1.md)) in under a minute; I reviewed and approved it, and the build followed.
 
