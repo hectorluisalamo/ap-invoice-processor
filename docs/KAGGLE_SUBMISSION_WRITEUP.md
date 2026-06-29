@@ -9,11 +9,11 @@
 
 ## 1. The Problem
 
-Accounts payable is where finance teams burn the most hours for the least credit. Someone keys in vendor names, matches purchase orders by hand, codes line items to the right GL account, and prays they don't pay the same invoice twice. Industry benchmarks for fully-loaded manual AP — the APQC and Ardent Partners type figures — land somewhere between $10 and $20 per invoice once you count labor, paper, and rework. I use **$14.50 as a representative midpoint** throughout this writeup, and I'm clear that it's an assumed benchmark, not a measured one.
+Accounts payable is where finance teams burn the most hours for the least credit. A clerk must key in vendor names, match purchase orders by hand, code line items to the right General Ledger (GL) account, and pray they don't pay the same invoice twice. Industry benchmarks for fully-loaded manual AP — the APQC and Ardent Partners type figures — land somewhere between $10 and $20 per invoice once you count labor, paper, and rework. I use **$14.50 as a representative midpoint** throughout this writeup, and I'm clear that it's an assumed benchmark, not a measured one.
 
-OCR cleaned up the data-entry half of the job, but it didn't add judgment. A scanner can pull "$4,200.00" off a page. It can't decide that a Datadog charge belongs in Cloud Services, flag the invoice that's $300 over the PO, or refuse to post anything over five grand without a human signing off. That's the gap I built AP Copilot to close.
+OCR cleaned up the data-entry half of the job, but it didn't add judgment. A scanner can pull "$4,200.00" off a page; it can't decide that a Datadog charge belongs in Cloud Services, flag the invoice that's $300 over the PO, or refuse to post anything over five grand without a human signing off. That's the gap I built AP Copilot to close.
 
-**AP Copilot** runs invoices end to end — from raw intake to a NetSuite GL posting — on a **Google ADK 2.0** agent graph, with a hard human gate on anything high-dollar or compliance-flagged. The agent does the grunt work. A person still owns the money.
+**AP Copilot** runs invoices end to end — from raw intake to a NetSuite GL posting — on a **Google ADK 2.0** agent graph with a hard human gate on anything high-dollar or compliance-flagged. The agent does the grunt work, but a person still owns the decisions.
 
 ---
 
@@ -68,9 +68,9 @@ Financial agents move real money, so the controls are hard, not advisory. A $5,0
 
 ### Concept 5: Antigravity
 
-I built AP Copilot in Google Antigravity, and I got there by elimination. I first tried to build the whole thing in a general-purpose coding agent (Claude Code) on my laptop. It struggled — ADK 2.0 and the Antigravity workflow aren't in its training, so it stopped to research nearly every step, hit walls, and troubleshot its way forward. Slow going. I paused it and moved to Antigravity, which is purpose-built for exactly this stack.
+I built AP Copilot in Google Antigravity, and I got there by elimination. I first tried to build the whole thing in a general-purpose coding agent (Claude Code) on my laptop. Claude struggled, probably since ADK 2.0 and the Antigravity workflow aren't in its training; it stopped to research nearly every step, hit walls, and troubleshot its way forward — a slowgoing process. I paused it and moved to Antigravity (the desktop app), which is purpose-built for exactly this stack.
 
-There the workflow was the opposite of a fight. I created a project, dropped in my `PLAN.md` and `BUILD.md`, and gave it one line of intent — *build a linear ADK agent graph, one invoice in, one posted entry out.* It produced an implementation plan ([`round1_initial_build/implementation_plan_v1.md`](round1_initial_build/implementation_plan_v1.md)) within minutes; I reviewed and approved it, and the build followed. Steering the agent through its own plan artifacts rather than typing code is the Antigravity way of working — and it's what the video walkthrough shows.
+There the workflow was the opposite of a slog. I created a project, dropped in my `PLAN.md` and `BUILD.md` (created with Claude Code), and fed Antigravity my intent: "build a linear ADK agent graph: one invoice in → one posted GL entry out, with a human gate on anything risky." Antigravity produced an implementation plan ([`round1_initial_build/implementation_plan_v1.md`](round1_initial_build/implementation_plan_v1.md)) in under a minute; I reviewed and approved it, and the build followed.
 
 ---
 
@@ -106,10 +106,10 @@ Two ways to drive it:
 
 ## 6. Development & Validation
 
-I built AP Copilot in Google Antigravity, then put it through two independent audits with Claude Code — a five-agent review covering confidentiality, rules-compliance, security, writing, and code and architecture. Every blocker the audits turned up got fixed before I submitted, including hardening the MCP integration from a stub into a real client-server pair. I ran the reviews because money agents fail quietly, and I'd rather catch the failures than ship them. The full round-by-round trail — including Antigravity's own build artifacts — is in [`docs/AUDIT.md`](AUDIT.md).
+I built AP Copilot in Google Antigravity, then put it through two independent audits with Claude Code — involving a five-agent review covering confidentiality, rules-compliance, security, writing, and code & architecture. Every blocker the audits turned up got fixed before I submitted, including hardening the MCP integration from a stub into a real client-server pair. I ran the reviews because money agents fail quietly, and I'd rather catch the failures than ship them. The full round-by-round trail — including Antigravity's own build artifacts — is in [`docs/AUDIT.md`](AUDIT.md).
 
 ---
 
 ## 7. Conclusion
 
-AP Copilot pairs autonomous GL coding with a human gate that can't be bypassed. The agent handles the volume — intake, extraction, coding, policy checks — and a person makes the call on anything that touches real money over the line. On 50 synthetic invoices that combination cuts the per-invoice cost by 87.9% against a $14.50 baseline while keeping a full, replayable audit trail. The data here is 100% synthetic; the architecture is built to take real invoices next.
+AP Copilot pairs autonomous GL coding with a human gate that can't be bypassed. The agent handles the volume — intake, extraction, coding, policy checks — and a person makes the call on anything that touches real money over the line. On 50 synthetic invoices, that combination cuts the per-invoice cost by 87.9% against a $14.50 baseline while keeping a full, replayable audit trail. The data here is 100% synthetic; the architecture is built to take real invoices next.
