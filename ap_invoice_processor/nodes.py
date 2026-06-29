@@ -11,6 +11,7 @@ from google.adk.workflow import node
 
 from ap_invoice_processor.models import InvoiceState, DecisionStep, LineItem
 from ap_invoice_processor.skill_loader import load_skill_rules
+from mcp_server.netsuite_mcp_client import post_invoice_sync
 
 def _load_json_data(filename: str) -> Any:
     data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
@@ -311,21 +312,36 @@ def poster_node(ctx: Context, node_input: Any) -> Event:
         res_dict = invoice_state.model_dump()
         return Event(output=res_dict, state={"invoice_state": res_dict})
 
-    ns_id = f"NS-POST-{random.randint(10000, 99999)}"
-    timestamp = datetime.now().isoformat()
+    # Post through the NetSuite MCP server: this node acts as an MCP client, spawns the
+    # mock server over stdio, and calls its post_invoice_to_netsuite tool to obtain the
+    # transaction id. No real ERP / network - the server returns synthetic mock data.
+    first_line = invoice_state.extracted_fields.line_items[0] if invoice_state.extracted_fields.line_items else None
+    gl_account = first_line.gl_account if first_line and first_line.gl_account else "6100"
+
+    mcp_result = post_invoice_sync(
+        invoice_id=invoice_state.invoice_id,
+        vendor=invoice_state.extracted_fields.vendor_name or "Unknown Vendor",
+        amount=invoice_state.extracted_fields.total_amount,
+        gl_account=gl_account,
+    )
+
+    ns_id = mcp_result["transaction_id"]
+    timestamp = mcp_result.get("timestamp") or datetime.now().isoformat()
     invoice_state.posted_entry_id = ns_id
     invoice_state.posting_timestamp = timestamp
 
     step = DecisionStep(
         step_index=len(invoice_state.decision_trail) + 1,
         node_name="Poster",
-        action="Write Posted GL Entry via NetSuite ERP Sandbox",
-        reasoning=f"Successfully posted GL entry to NetSuite ERP sandbox with Transaction ID '{ns_id}'.",
+        action="Post GL Entry via NetSuite MCP Server",
+        reasoning=f"Posted GL entry via the NetSuite MCP server (post_invoice_to_netsuite tool). Transaction ID '{ns_id}', status '{mcp_result.get('status', 'posted')}'.",
         confidence=1.0,
         output_summary={
             "netsuite_transaction_id": ns_id,
+            "mcp_status": mcp_result.get("status", "posted"),
             "posted_timestamp": timestamp,
-            "total_posted_amount": invoice_state.extracted_fields.total_amount
+            "total_posted_amount": invoice_state.extracted_fields.total_amount,
+            "posted_via": "netsuite_mcp_server"
         }
     )
     invoice_state.decision_trail.append(step)
