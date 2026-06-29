@@ -19,11 +19,11 @@ After a first review flagged problems, Antigravity attempted fixes and reported 
 **Two of round 2's reported fixes did not actually hold** — and the artifacts are kept as-authored precisely so that's on the record:
 
 - `walkthrough_v2.md` states the demo was fixed by switching to `state_delta=...`. It wasn't: that approach re-runs the graph from the start, so the human reviewer's decision never reaches the Poster — the CLI and web demos exited before posting. The failure was *silent* (no exception), which is exactly why it slipped through.
-- The MCP Server "concept" was still a `random.randint()` stub — no MCP server or client existed in round 2.
+- The MCP Server "concept" wasn't real — the Poster fabricated its transaction ID inline via `random.randint()`, with no MCP server or client anywhere in round 2.
 
 ## Round 3 — Independent audit & real remediation (Claude Code)
 
-A second, deeper audit — a multi-agent review (confidentiality, rules-compliance, security, writing, code/architecture) with a separate fresh-context agent re-running the system to verify every fix — caught that round 2 was still broken, and did the real remediation that ships in this repo.
+A second Claude Code audit — the first had produced the blocker list that round 2 tried to address — went deeper: a multi-agent review (confidentiality, rules-compliance, security, writing, code/architecture) with a separate fresh-context agent re-running the system to verify every fix. It caught that round 2 was still broken, and did the real remediation that ships in this repo.
 
 ### What round 3 found and fixed
 
