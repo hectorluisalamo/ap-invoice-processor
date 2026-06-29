@@ -4,6 +4,11 @@
 *Track: Agents for Business | Framework: Google ADK 2.0 & Antigravity*
 
 [![CI](https://github.com/hectorluisalamo/ap-invoice-processor/actions/workflows/ci.yml/badge.svg)](https://github.com/hectorluisalamo/ap-invoice-processor/actions/workflows/ci.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
+![Built with Google ADK](https://img.shields.io/badge/Built%20with-Google%20ADK%202.0-4285F4?logo=google&logoColor=white)
+![MCP](https://img.shields.io/badge/MCP-enabled-FF6F00)
+![Tests](https://img.shields.io/badge/tests-6%20passing-brightgreen)
 
 ---
 
