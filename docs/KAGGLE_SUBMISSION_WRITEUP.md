@@ -67,7 +67,10 @@ The accounting policy — vendor-to-GL tables, fallback rules, approval threshol
 Financial agents move real money, so the controls are hard, not advisory. A $5,000 ceiling and duplicate protection are non-negotiable, and any flagged transaction suspends in memory via `RequestInput` and cannot write to NetSuite without explicit human approval.
 
 ### Concept 5: Antigravity
-I built the whole thing in Google Antigravity, shown in the video walkthrough.
+
+I built AP Copilot in Google Antigravity, and I got there by elimination. I first tried to build the whole thing in a general-purpose coding agent (Claude Code) on my laptop. It struggled — ADK 2.0 and the Antigravity workflow aren't in its training, so it stopped to research nearly every step, hit walls, and troubleshot its way forward. Slow going. I paused it and moved to Antigravity, which is purpose-built for exactly this stack.
+
+There the workflow was the opposite of a fight. I created a project, dropped in my `PLAN.md` and `BUILD.md`, and gave it one line of intent — *build a linear ADK agent graph, one invoice in, one posted entry out.* It produced an implementation plan ([`round1_initial_build/implementation_plan_v1.md`](round1_initial_build/implementation_plan_v1.md)) within minutes; I reviewed and approved it, and the build followed. Steering the agent through its own plan artifacts rather than typing code is the Antigravity way of working — and it's what the video walkthrough shows.
 
 ---
 
