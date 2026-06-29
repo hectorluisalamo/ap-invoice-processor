@@ -3,6 +3,8 @@
 **Kaggle Capstone Submission: 5-Day AI Agents Intensive Vibe Coding Course With Google**  
 *Track: Agents for Business | Framework: Google ADK 2.0 & Antigravity*
 
+[![CI](https://github.com/hectorluisalamo/ap-invoice-processor/actions/workflows/ci.yml/badge.svg)](https://github.com/hectorluisalamo/ap-invoice-processor/actions/workflows/ci.yml)
+
 ---
 
 ## 💡 Executive Summary & ROI Value Proposition
