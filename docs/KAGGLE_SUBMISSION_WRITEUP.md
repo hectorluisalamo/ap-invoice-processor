@@ -103,7 +103,7 @@ Two ways to drive it:
 
 ## 6. Development & Validation
 
-I built AP Copilot in Google Antigravity, then put it through two independent audits with Claude Code — a five-agent review covering confidentiality, rules-compliance, security, writing, and code and architecture. Every blocker the audits turned up got fixed before I submitted, including hardening the MCP integration from a stub into a real client-server pair. I ran the reviews because money agents fail quietly, and I'd rather catch the failures than ship them.
+I built AP Copilot in Google Antigravity, then put it through two independent audits with Claude Code — a five-agent review covering confidentiality, rules-compliance, security, writing, and code and architecture. Every blocker the audits turned up got fixed before I submitted, including hardening the MCP integration from a stub into a real client-server pair. I ran the reviews because money agents fail quietly, and I'd rather catch the failures than ship them. The full round-by-round trail — including Antigravity's own build artifacts — is in [`docs/AUDIT.md`](AUDIT.md).
 
 ---
 
