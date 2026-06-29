@@ -5,10 +5,17 @@ from typing import Dict, Any, List
 
 from google.adk.apps import App
 from google.adk.runners import InMemoryRunner
-from google.adk.events.request_input import RequestInput
 from google.genai import types
 
 from ap_invoice_processor.graph import root_agent
+
+HUMAN_GATE_INTERRUPT_ID = "human_triage"
+
+
+def _is_paused_at_gate(event) -> bool:
+    """The human gate pause surfaces as a normal Event whose long_running_tool_ids
+    contains the interrupt id - the runner never yields a RequestInput here."""
+    return bool(event.long_running_tool_ids and HUMAN_GATE_INTERRUPT_ID in event.long_running_tool_ids)
 
 async def run_evaluation():
     print("=" * 75)
@@ -45,15 +52,11 @@ async def run_evaluation():
         paused_at_gate = False
 
         try:
+            # Consume the stream fully (don't break) - the runner suspends at the
+            # gate on its own; breaking mid-stream cancels the workflow noisily.
             async for event in runner.run_async(user_id="eval_user", session_id=session.id, new_message=new_msg):
-                if isinstance(event, RequestInput):
+                if _is_paused_at_gate(event):
                     paused_at_gate = True
-                    break
-                
-                if event.actions and event.actions.state_delta and "invoice_state" in event.actions.state_delta:
-                    st = event.actions.state_delta["invoice_state"]
-                    route_signal = st.get("route_signal")
-                    final_state = st
 
                 if event.output and isinstance(event.output, dict) and "invoice_id" in event.output:
                     final_state = event.output
