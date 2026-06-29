@@ -2,24 +2,24 @@
 
 **Track:** Agents for Business  
 **Submission Title:** AP Copilot — Linear ADK 2.0 Agent Graph for Autonomous Invoice Processing  
-**Author:** Hector  
+**Author:** Hector Luis Alamo  
 **Frameworks Used:** Google Agent Development Kit (ADK 2.0), Google Antigravity, FastAPI, Pydantic  
 
 ---
 
-## 1. Problem Statement & Enterprise ROI Context
+## 1. The Problem
 
-Accounts Payable (AP) processing remains one of the most labor-intensive and error-prone back-office operations in modern enterprise finance. Organizations typically incur **$12.88 to $19.83 per invoice** in manual labor, paper handling, data entry, and GL account coding. Furthermore, manual processing creates significant risk exposure to duplicate payments, mismatched purchase orders (POs), and policy compliance violations.
+Accounts payable is where finance teams burn the most hours for the least credit. A clerk must key in vendor names, match purchase orders by hand, code line items to the right General Ledger (GL) account, and pray they don't pay the same invoice twice. Industry benchmarks for fully-loaded manual AP — the APQC and Ardent Partners type figures — land somewhere between $10 and $20 per invoice once you count labor, paper, and rework. I use **$14.50 as a representative midpoint** throughout this writeup, and I'm clear that it's an assumed benchmark, not a measured one.
 
-While optical character recognition (OCR) and document extraction tools have improved data ingestion, traditional systems lack autonomous reasoning capabilities. They cannot dynamically map unstructured line items to standard General Ledger (GL) accounts based on vendor context, nor can they enforce nuanced financial safety controls.
+OCR cleaned up the data-entry half of the job, but it didn't add judgment. A scanner can pull "$4,200.00" off a page; it can't decide that a Datadog charge belongs in Cloud Services, flag the invoice that's $300 over the PO, or refuse to post anything over five grand without a human signing off. That's the gap I built AP Copilot to close.
 
-**AP Copilot** solves this challenge by implementing an autonomous accounts-payable agent powered by **Google ADK 2.0**. It automates end-to-end invoice processing—from raw intake to NetSuite ERP posting—while introducing a **hard Human-in-the-Loop (HITL) safety rail** on high-dollar or compliance-flagged invoices.
+**AP Copilot** runs invoices end to end — from raw intake to a NetSuite GL posting — on a **Google ADK 2.0** agent graph with a hard human gate on anything high-dollar or compliance-flagged. The agent does the grunt work, but a person still owns the decisions.
 
 ---
 
-## 2. System Architecture & Agent Workflow Graph
+## 2. System Architecture
 
-AP Copilot is architected as a linear 6-node graph using the **ADK 2.0 Workflow API**. The workflow threads a validated, immutable shared state model (`InvoiceState`) and a granular decision trail (`DecisionStep`) across every step of execution.
+AP Copilot is a linear six-node graph built on the **ADK 2.0 Workflow API**. Every node reads and writes one validated, immutable shared state (`InvoiceState`) and appends to a decision trail (`DecisionStep`), so I can replay exactly why the agent did what it did.
 
 ```text
 ┌──────────┐     ┌───────────┐     ┌──────────┐     ┌──────────────────┐
@@ -31,71 +31,85 @@ AP Copilot is architected as a linear 6-node graph using the **ADK 2.0 Workflow 
                                 ┌──────────┐                                ┌────────────┐
                                 │  Poster  │ <───────────────────────────── │ Human Gate │ (Approved)
                                 └──────────┘                                └────────────┘
-                                (NetSuite ERP)                               (Safety Rail)
+                                (NetSuite via MCP)                           (Safety Rail)
 ```
 
-### Node Execution Responsibilities:
+### What each node does:
 
-1. **Intake Node (`intake_node`):** Ingests raw invoice payloads (JSON, text streams, visual scans) and normalizes the data into an initialized `InvoiceState` shared object.
-2. **Extractor Node (`extractor_node`):** Executes structured entity parsing to extract vendor names, total amounts, invoice dates, line item details, and PO numbers, assigning confidence scores (0.0 to 1.0) for each field.
-3. **GL-Coder Node (`gl_coder_node`):** Applies rules from a portable **Agent Skill (`SKILL.md`)** to map individual line items to the correct 4-digit GL account codes (e.g., GL 6000 Cloud Services, GL 6100 Office Supplies) and department tags based on vendor patterns and item descriptions.
-4. **Policy-Validator Node (`policy_validator_node`):** Checks hard financial policies and safety rails:
-   - **$5,000 Auto-Post Ceiling:** Automatically flags any invoice $\ge \$5,000.00$ for human review.
-   - **Duplicate Detection:** Verifies invoice numbers against historical ERP records.
-   - **PO Matching:** Validates purchase orders against the procurement master database.
-   - **Confidence Threshold:** Flags extractions with confidence $< 0.85$.
-   - *Routing Signal:* Sets conditional route to `auto_post` or `human_review`.
-5. **Human Gate Node (`human_gate_node`):** An interactive suspend/resume node. If policy flags are raised, execution pauses via ADK `RequestInput` and waits for human reviewer triage (Approve or Reject).
-6. **Poster Node (`poster_node`):** Executes mock NetSuite ERP GL posting via MCP backend integration, generating a transaction tracking ID (`NS-POST-XXXXX`).
+1. **Intake (`intake_node`):** Takes raw invoice payloads — JSON, text, visual scans — and normalizes them into an initialized `InvoiceState`.
+2. **Extractor (`extractor_node`):** Parses out vendor, totals, dates, line items, and PO numbers, scoring each field's confidence from 0.0 to 1.0.
+3. **GL-Coder (`gl_coder_node`):** Reads an Agent Skill (`SKILL.md`) and maps each line item to a four-digit GL account (6000 Cloud Services, 6100 Office Supplies, and so on) plus a department tag, working from vendor patterns and item descriptions.
+4. **Policy-Validator (`policy_validator_node`):** Enforces the hard rules and sets the route:
+   - **$5,000 auto-post ceiling:** anything at or above $5,000 goes to a human.
+   - **Duplicate detection:** checks invoice numbers against ERP history.
+   - **PO matching:** validates against the procurement master.
+   - **Confidence threshold:** flags any extraction below 0.85.
+   - Then it routes to `auto_post` or `human_review`.
+5. **Human Gate (`human_gate_node`):** A suspend/resume node. When a flag fires, execution pauses on ADK `RequestInput` and waits for a reviewer to approve or reject. Nothing slips past it.
+6. **Poster (`poster_node`):** Posts the GL entry to NetSuite through a local MCP server and returns a transaction ID (`NS-POST-XXXXX`).
 
 ---
 
-## 3. Demonstration of Core Competition Concepts
+## 3. Competition Concepts Demonstrated
 
-AP Copilot demonstrates **3 core official competition concepts** (plus Antigravity orchestration):
+AP Copilot demonstrates **five of the six named concepts** — four in code, one in the build — leaving out only Deployability.
 
 ### Concept 1: ADK 2.0 Workflow Multi-Agent Graph
-Built natively using `google.adk.workflow.Workflow`, `@node` decorators, and explicit conditional edge routing (`Edge(from_node=..., to_node=..., route=...)`). The framework manages event propagation and async state serialization.
+Built on `google.adk.workflow.Workflow` with `@node` decorators and explicit conditional edges (`Edge(from_node=..., to_node=..., route=...)`). ADK handles event propagation and async state serialization across the graph.
 
-### Concept 2: Portable Agent Skill (`SKILL.md`)
-Encapsulates company accounting policies, vendor GL mapping tables, fallback rules, and approval thresholds inside a modular `skills/ap_invoice_skill/SKILL.md` file, demonstrating how financial intelligence can be packaged and loaded dynamically at runtime.
+### Concept 2: MCP Server (real, not a stub)
+The Poster posts through a **local NetSuite MCP server I wrote, called by a matching MCP client.** This isn't a mocked function pretending to be an integration — the agent makes a real MCP call across the protocol to post the GL entry. The server stands in for a NetSuite tenant, but the wire between agent and ERP is genuine MCP.
 
-### Concept 3: Security Features & Human-in-the-Loop Safety Rails
-Financial agents manage real money. AP Copilot enforces a strict **hard dollar ceiling ($5,000.00)** and duplicate protection. Flagged transactions suspend cleanly in memory via `RequestInput` and cannot write to NetSuite without explicit human approval.
+### Concept 3: Agent Skill (`SKILL.md`)
+The accounting policy — vendor-to-GL tables, fallback rules, approval thresholds — lives in `skills/ap_invoice_skill/SKILL.md` and gets parsed at runtime, not hardcoded. Swap the file, swap the company's chart of accounts. The financial intelligence is portable.
 
-*(Note: Google Antigravity framework orchestration is also demonstrated in the video walkthrough).*
+### Concept 4: Security & Human-in-the-Loop
+Financial agents move real money, so the controls are hard, not advisory. A $5,000 ceiling and duplicate protection are non-negotiable, and any flagged transaction suspends in memory via `RequestInput` and cannot write to NetSuite without explicit human approval.
 
----
+### Concept 5: Antigravity
 
-## 4. Evaluation Benchmark & Statistical ROI Readout
+I built AP Copilot in Google Antigravity, and I got there by elimination. I first tried to build the whole thing in a general-purpose coding agent (Claude Code) on my laptop. Claude struggled, probably since ADK 2.0 and the Antigravity workflow aren't in its training; it stopped to research nearly every step, hit walls, and troubleshot its way forward — a slowgoing process. I paused it and moved to Antigravity (the desktop app), which is purpose-built for exactly this stack.
 
-To validate AP Copilot under statistical rigor, an automated evaluation harness (`eval/eval_harness.py`) was executed across a randomized benchmark suite of **50 synthetic invoices** representing clean routine bills and dirty compliance edge cases.
-
-### Benchmark Results (N=50 Synthetic Invoices):
-- **Total Invoices Evaluated:** 50
-- **GL Coding Accuracy:** **82.0%**
-- **Safety Routing Accuracy:** **94.0%** (Correctly routed risky invoices to human triage)
-- **Autonomous Auto-Post Rate:** **44.0%**
-- **Human Triage Rate:** **56.0%**
-
-### Enterprise Financial ROI Model:
-- **Baseline Manual AP Cost:** $14.50 / invoice
-- **AP Copilot Compute Cost:** $0.35 / invoice (AI extraction & reasoning)
-- **Human Triage Cost:** $2.50 / review (for flagged invoices)
-- **Blended AP Copilot Cost:** **$1.75 / invoice**
-- **Net Cost Reduction:** **$12.75 saved per invoice**
-- **Total ROI Savings:** **87.9% Cost Savings**
+There the workflow was the opposite of a slog. I created a project, dropped in my `PLAN.md` and `BUILD.md` (created with Claude Code), and fed Antigravity my intent: "build a linear ADK agent graph: one invoice in → one posted GL entry out, with a human gate on anything risky." Antigravity produced an implementation plan ([`round1_initial_build/implementation_plan_v1.md`](round1_initial_build/implementation_plan_v1.md)) in under a minute; I reviewed and approved it, and the build followed.
 
 ---
 
-## 5. User Interfaces & Demoable Surface
+## 4. Evaluation & ROI
 
-AP Copilot features two complete user interfaces:
-1. **Interactive Web Dashboard (FastAPI + HTML/CSS/JS):** A sleek, dark-mode web application (`http://localhost:8000`) providing live visual node pipeline animations, an interactive Human Gate Triage desk, and step-by-step decision audit log inspection.
-2. **Interactive Terminal CLI (`cli_demo.py`):** A console runner allowing users to step through invoice scenarios and simulate human approval prompts in terminal environments.
+I ran `eval/eval_harness.py` over **50 synthetic invoices** — a mix of clean routine bills and dirty compliance edge cases — to see how the agent actually performs instead of guessing.
+
+### Results (N=50 synthetic invoices):
+- **GL coding accuracy:** **82.0%**
+- **Safety routing accuracy:** **94.0%** (risky invoices correctly sent to a human)
+- **Auto-post rate:** **44.0%**
+- **Human triage rate:** **56.0%**
+
+### The ROI math:
+- **Manual baseline:** $14.50 / invoice (representative industry midpoint, as stated above)
+- **AP Copilot compute:** $0.35 / invoice
+- **Human triage:** $2.50 / flagged review
+- **Blended cost:** **$1.75 / invoice**
+- **Savings:** **$12.75 per invoice — 87.9%**
+
+The harness computes the blend straight from the auto-post and triage rates above, so the number moves if the rates move. No hand-waving.
 
 ---
 
-## 6. Conclusion & Summary
+## 5. The Surfaces
 
-AP Copilot demonstrates how Google's ADK 2.0 framework and Antigravity tooling enable developers to build robust, secure, and business-critical AI agents. By pairing autonomous GL coding with unbypassable human safety rails, organizations can capture an **87.9% cost reduction** while retaining complete auditability and financial risk control.
+Two ways to drive it:
+
+1. **Web dashboard (FastAPI + HTML/CSS/JS):** A dark-mode app at `http://localhost:8000` with live node-pipeline animation, a Human Gate triage desk, and a step-by-step decision audit log you can open up and read.
+2. **Terminal CLI (`cli_demo.py`):** A console runner that steps through invoice scenarios and simulates the approval prompt for people who live in a shell.
+
+---
+
+## 6. Development & Validation
+
+I built AP Copilot in Google Antigravity, then put it through two independent audits with Claude Code — involving a five-agent review covering confidentiality, rules-compliance, security, writing, and code & architecture. Every blocker the audits turned up got fixed before I submitted, including hardening the MCP integration from a stub into a real client-server pair. I ran the reviews because money agents fail quietly, and I'd rather catch the failures than ship them. The full round-by-round trail — including Antigravity's own build artifacts — is in [`docs/AUDIT.md`](AUDIT.md).
+
+---
+
+## 7. Conclusion
+
+AP Copilot pairs autonomous GL coding with a human gate that can't be bypassed. The agent handles the volume — intake, extraction, coding, policy checks — and a person makes the call on anything that touches real money over the line. On 50 synthetic invoices, that combination cuts the per-invoice cost by 87.9% against a $14.50 baseline while keeping a full, replayable audit trail. The data here is 100% synthetic; the architecture is built to take real invoices next.

@@ -4,8 +4,32 @@ import asyncio
 from ap_invoice_processor.graph import root_agent
 from google.adk.apps import App
 from google.adk.runners import InMemoryRunner
-from google.adk.events.request_input import RequestInput
 from google.genai import types
+
+HUMAN_GATE_INTERRUPT_ID = "human_triage"
+
+
+def _is_paused_at_gate(event) -> bool:
+    """The runner surfaces the human gate pause as a normal Event whose
+    long_running_tool_ids contains the interrupt id - never as a RequestInput."""
+    return bool(event.long_running_tool_ids and HUMAN_GATE_INTERRUPT_ID in event.long_running_tool_ids)
+
+
+def _build_resume_message(decision: str, reasoning: str) -> types.Content:
+    """Resume an interrupted node by sending a FunctionResponse carrying the human
+    decision. The runner maps it to ctx.resume_inputs['human_triage']."""
+    return types.Content(
+        role="user",
+        parts=[
+            types.Part(
+                function_response=types.FunctionResponse(
+                    id=HUMAN_GATE_INTERRUPT_ID,
+                    name="adk_request_input",
+                    response={"decision": decision, "reasoning": reasoning},
+                )
+            )
+        ],
+    )
 
 async def run_cli_demo():
     print("=" * 70)
@@ -42,39 +66,41 @@ async def run_cli_demo():
     new_msg = types.Content(role="user", parts=[types.Part.from_text(text=input_text)])
 
     last_state = None
-    state_delta = None
+    next_message = new_msg
 
     while True:
         paused_at_gate = False
+        # Consume the full event stream to completion - never break out early. The
+        # runner suspends the generator on its own at the human gate (the gate event
+        # is the last one yielded), and on a non-gated run the stream ends after the
+        # Poster. Breaking mid-stream cancels the workflow and produces noisy errors.
         async for event in runner.run_async(
             user_id="cli_user",
             session_id=session.id,
-            new_message=new_msg if not state_delta else None,
-            state_delta=state_delta
+            new_message=next_message,
         ):
-            if isinstance(event, RequestInput):
+            if _is_paused_at_gate(event):
                 paused_at_gate = True
-                break
 
-            if event.actions and event.actions.state_delta and "invoice_state" in event.actions.state_delta:
-                st = event.actions.state_delta["invoice_state"]
+            if event.output and isinstance(event.output, dict) and "invoice_id" in event.output:
+                st = event.output
                 last_state = st
                 if st.get("decision_trail"):
                     last_step = st["decision_trail"][-1]
                     print(f"  [Node: {last_step['node_name']:<16}] Action: {last_step['action']}")
                     print(f"                            Reasoning: {last_step['reasoning']}")
 
-            if event.output and isinstance(event.output, dict) and "posted_entry_id" in event.output:
-                final_st = event.output
-                if final_st.get("posted_entry_id"):
-                    print("\n" + "=" * 70)
-                    print(f" SUCCESS: NetSuite Transaction Posted! Transaction ID: {final_st['posted_entry_id']}")
-                    print("=" * 70)
-                elif final_st.get("human_decision") == "rejected":
-                    print("\n" + "=" * 70)
-                    print(" ABORTED: Posting cancelled by human reviewer rejection.")
-                    print("=" * 70)
-                return
+        # Terminal detection: the Poster ran (posted a real id, or aborted on reject).
+        if last_state and last_state.get("posted_entry_id"):
+            print("\n" + "=" * 70)
+            print(f" SUCCESS: NetSuite Transaction Posted via MCP! Transaction ID: {last_state['posted_entry_id']}")
+            print("=" * 70)
+            return
+        if last_state and last_state.get("human_decision") == "rejected" and _poster_ran(last_state):
+            print("\n" + "=" * 70)
+            print(" ABORTED: Posting cancelled by human reviewer rejection.")
+            print("=" * 70)
+            return
 
         if paused_at_gate and last_state:
             print("\n" + "!" * 70)
@@ -83,16 +109,18 @@ async def run_cli_demo():
             decision = input("\nApprove or Reject invoice? (approve/reject) [default: approve]: ").strip().lower()
             if not decision: decision = "approved"
             else: decision = "approved" if decision.startswith("a") else "rejected"
-            
+
             reasoning = input("Enter reviewer reasoning: ").strip()
             if not reasoning: reasoning = f"Reviewed and {decision} via CLI prompt."
 
-            last_state["human_decision"] = decision
-            last_state["human_reasoning"] = reasoning
-            state_delta = {"invoice_state": last_state}
-            new_msg = None
+            next_message = _build_resume_message(decision, reasoning)
         else:
             break
+
+
+def _poster_ran(state: dict) -> bool:
+    """True once the Poster node has appended a step to the decision trail."""
+    return any(step.get("node_name") == "Poster" for step in state.get("decision_trail", []))
 
 if __name__ == "__main__":
     asyncio.run(run_cli_demo())
