@@ -1,0 +1,47 @@
+[
+  {
+    "vendor_id": "VEND-1001",
+    "name": "Amazon Web Services",
+    "aliases": ["AWS", "Amazon Web Services Inc", "AWS Cloud"],
+    "default_gl_account": "6000",
+    "default_department": "Engineering",
+    "payment_terms": "Net 30",
+    "po_required": false
+  },
+  {
+    "vendor_id": "VEND-1002",
+    "name": "Staples Business Advantage",
+    "aliases": ["Staples", "Staples Inc", "Staples Office Solutions"],
+    "default_gl_account": "6100",
+    "default_department": "Administration",
+    "payment_terms": "Net 15",
+    "po_required": true
+  },
+  {
+    "vendor_id": "VEND-1003",
+    "name": "Apex Consulting Group",
+    "aliases": ["Apex Consulting", "Apex Advisory Services"],
+    "default_gl_account": "6200",
+    "default_department": "Legal & Finance",
+    "payment_terms": "Net 30",
+    "po_required": true
+  },
+  {
+    "vendor_id": "VEND-1004",
+    "name": "Apple Hardware Direct",
+    "aliases": ["Apple Inc", "Apple Store for Business"],
+    "default_gl_account": "7000",
+    "default_department": "IT Infrastructure",
+    "payment_terms": "Net 30",
+    "po_required": true
+  },
+  {
+    "vendor_id": "VEND-1005",
+    "name": "Acme Marketing Solutions",
+    "aliases": ["Acme Ads", "Acme Marketing Corp"],
+    "default_gl_account": "6500",
+    "default_department": "Marketing",
+    "payment_terms": "Net 30",
+    "po_required": false
+  }
+]

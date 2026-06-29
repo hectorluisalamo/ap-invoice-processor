@@ -1,0 +1,2890 @@
+[
+  {
+    "id": "INV-2026-001",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-001\nVendor: Apple Hardware Direct\nDate: 2026-06-28\nPO: PO-8819\nTotal: $2475.15",
+    "ground_truth": {
+      "vendor_name": "Apple Hardware Direct",
+      "vendor_id": "VEND-1004",
+      "invoice_number": "INV-2026-001",
+      "date": "2026-06-28",
+      "po_number": "PO-8819",
+      "total_amount": 2475.15,
+      "expected_route": "auto_post",
+      "expected_gl": "7000",
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2475.15,
+          "amount": 2475.15
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apple Hardware Direct",
+      "invoice_number": "INV-2026-001",
+      "date": "2026-06-28",
+      "po_number": "PO-8819",
+      "total_amount": 2475.15,
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2475.15,
+          "amount": 2475.15
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.96,
+        "invoice_number": 0.96,
+        "date": 0.96,
+        "total_amount": 0.96,
+        "line_items": 0.96
+      }
+    }
+  },
+  {
+    "id": "INV-2026-002",
+    "test_case_type": "low_confidence",
+    "description": "Synthetic scenario: low_confidence",
+    "raw_text": "INVOICE #INV-2026-002\nVendor: Apex Advisory Services\nDate: 2026-06-28\nPO: PO-8820\nTotal: $3348.59",
+    "ground_truth": {
+      "vendor_name": "Apex Consulting Group",
+      "vendor_id": "VEND-1003",
+      "invoice_number": "INV-2026-002",
+      "date": "2026-06-28",
+      "po_number": "PO-8820",
+      "total_amount": 3348.59,
+      "expected_route": "human_review",
+      "expected_gl": "6200",
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3348.59,
+          "amount": 3348.59
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Unknown Entity",
+      "invoice_number": "INV-2026-002",
+      "date": "2026-06-28",
+      "po_number": "PO-8820",
+      "total_amount": 3348.59,
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3348.59,
+          "amount": 3348.59
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.73,
+        "invoice_number": 0.73,
+        "date": 0.73,
+        "total_amount": 0.73,
+        "line_items": 0.73
+      }
+    }
+  },
+  {
+    "id": "INV-2026-003",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-003\nVendor: Acme Ads\nDate: 2026-06-28\nPO: PO-8820\nTotal: $1909.35",
+    "ground_truth": {
+      "vendor_name": "Acme Marketing Solutions",
+      "vendor_id": "VEND-1005",
+      "invoice_number": "INV-2026-003",
+      "date": "2026-06-28",
+      "po_number": "PO-8820",
+      "total_amount": 1909.35,
+      "expected_route": "auto_post",
+      "expected_gl": "6500",
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1145.61,
+          "amount": 1145.61
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 381.87,
+          "amount": 381.87
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 381.87,
+          "amount": 381.87
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Acme Ads",
+      "invoice_number": "INV-2026-003",
+      "date": "2026-06-28",
+      "po_number": "PO-8820",
+      "total_amount": 1909.35,
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1145.61,
+          "amount": 1145.61
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 381.87,
+          "amount": 381.87
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 381.87,
+          "amount": 381.87
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.92,
+        "invoice_number": 0.92,
+        "date": 0.92,
+        "total_amount": 0.92,
+        "line_items": 0.92
+      }
+    }
+  },
+  {
+    "id": "INV-2026-004",
+    "test_case_type": "low_confidence",
+    "description": "Synthetic scenario: low_confidence",
+    "raw_text": "INVOICE #INV-2026-004\nVendor: Acme Marketing Solutions\nDate: 2026-06-28\nPO: N/A\nTotal: $732.75",
+    "ground_truth": {
+      "vendor_name": "Acme Marketing Solutions",
+      "vendor_id": "VEND-1005",
+      "invoice_number": "INV-2026-004",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 732.75,
+      "expected_route": "human_review",
+      "expected_gl": "6500",
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 439.65,
+          "amount": 439.65
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 146.55,
+          "amount": 146.55
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 146.55,
+          "amount": 146.55
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Unknown Entity",
+      "invoice_number": "INV-2026-004",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 732.75,
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 439.65,
+          "amount": 439.65
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 146.55,
+          "amount": 146.55
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 146.55,
+          "amount": 146.55
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.68,
+        "invoice_number": 0.68,
+        "date": 0.68,
+        "total_amount": 0.68,
+        "line_items": 0.68
+      }
+    }
+  },
+  {
+    "id": "INV-2026-005",
+    "test_case_type": "high_dollar_ceiling",
+    "description": "Synthetic scenario: high_dollar_ceiling",
+    "raw_text": "INVOICE #INV-2026-005\nVendor: Staples\nDate: 2026-06-28\nPO: PO-8805\nTotal: $5744.34",
+    "ground_truth": {
+      "vendor_name": "Staples Business Advantage",
+      "vendor_id": "VEND-1002",
+      "invoice_number": "INV-2026-005",
+      "date": "2026-06-28",
+      "po_number": "PO-8805",
+      "total_amount": 5744.34,
+      "expected_route": "human_review",
+      "expected_gl": "6100",
+      "line_items": [
+        {
+          "description": "Staples Business Advantage Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3446.6,
+          "amount": 3446.6
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 1148.87,
+          "amount": 1148.87
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 1148.87,
+          "amount": 1148.87
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Staples",
+      "invoice_number": "INV-2026-005",
+      "date": "2026-06-28",
+      "po_number": "PO-8805",
+      "total_amount": 5744.34,
+      "line_items": [
+        {
+          "description": "Staples Business Advantage Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3446.6,
+          "amount": 3446.6
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 1148.87,
+          "amount": 1148.87
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 1148.87,
+          "amount": 1148.87
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.97,
+        "invoice_number": 0.97,
+        "date": 0.97,
+        "total_amount": 0.97,
+        "line_items": 0.97
+      }
+    }
+  },
+  {
+    "id": "INV-2026-006",
+    "test_case_type": "high_dollar_ceiling",
+    "description": "Synthetic scenario: high_dollar_ceiling",
+    "raw_text": "INVOICE #INV-2026-006\nVendor: Apex Consulting Group\nDate: 2026-06-28\nPO: PO-8802\nTotal: $3424.34",
+    "ground_truth": {
+      "vendor_name": "Apex Consulting Group",
+      "vendor_id": "VEND-1003",
+      "invoice_number": "INV-2026-006",
+      "date": "2026-06-28",
+      "po_number": "PO-8802",
+      "total_amount": 3424.34,
+      "expected_route": "human_review",
+      "expected_gl": "6200",
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2054.6,
+          "amount": 2054.6
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 684.87,
+          "amount": 684.87
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 684.87,
+          "amount": 684.87
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apex Consulting Group",
+      "invoice_number": "INV-2026-006",
+      "date": "2026-06-28",
+      "po_number": "PO-8802",
+      "total_amount": 3424.34,
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2054.6,
+          "amount": 2054.6
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 684.87,
+          "amount": 684.87
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 684.87,
+          "amount": 684.87
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.97,
+        "invoice_number": 0.97,
+        "date": 0.97,
+        "total_amount": 0.97,
+        "line_items": 0.97
+      }
+    }
+  },
+  {
+    "id": "INV-2026-007",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-007\nVendor: Apple Inc\nDate: 2026-06-28\nPO: PO-8815\nTotal: $176.55",
+    "ground_truth": {
+      "vendor_name": "Apple Hardware Direct",
+      "vendor_id": "VEND-1004",
+      "invoice_number": "INV-2026-007",
+      "date": "2026-06-28",
+      "po_number": "PO-8815",
+      "total_amount": 176.55,
+      "expected_route": "auto_post",
+      "expected_gl": "7000",
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 105.93,
+          "amount": 105.93
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 35.31,
+          "amount": 35.31
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 35.31,
+          "amount": 35.31
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apple Inc",
+      "invoice_number": "INV-2026-007",
+      "date": "2026-06-28",
+      "po_number": "PO-8815",
+      "total_amount": 176.55,
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 105.93,
+          "amount": 105.93
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 35.31,
+          "amount": 35.31
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 35.31,
+          "amount": 35.31
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.92,
+        "invoice_number": 0.92,
+        "date": 0.92,
+        "total_amount": 0.92,
+        "line_items": 0.92
+      }
+    }
+  },
+  {
+    "id": "INV-2026-008",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-008\nVendor: Apple Store\nDate: 2026-06-28\nPO: PO-8803\nTotal: $3345.24",
+    "ground_truth": {
+      "vendor_name": "Apple Hardware Direct",
+      "vendor_id": "VEND-1004",
+      "invoice_number": "INV-2026-008",
+      "date": "2026-06-28",
+      "po_number": "PO-8803",
+      "total_amount": 3345.24,
+      "expected_route": "auto_post",
+      "expected_gl": "7000",
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2230.16,
+          "amount": 2230.16
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 1115.08,
+          "amount": 1115.08
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apple Store",
+      "invoice_number": "INV-2026-008",
+      "date": "2026-06-28",
+      "po_number": "PO-8803",
+      "total_amount": 3345.24,
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2230.16,
+          "amount": 2230.16
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 1115.08,
+          "amount": 1115.08
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.93,
+        "invoice_number": 0.93,
+        "date": 0.93,
+        "total_amount": 0.93,
+        "line_items": 0.93
+      }
+    }
+  },
+  {
+    "id": "INV-2026-009",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-009\nVendor: Apple Inc\nDate: 2026-06-28\nPO: PO-8816\nTotal: $1288.01",
+    "ground_truth": {
+      "vendor_name": "Apple Hardware Direct",
+      "vendor_id": "VEND-1004",
+      "invoice_number": "INV-2026-009",
+      "date": "2026-06-28",
+      "po_number": "PO-8816",
+      "total_amount": 1288.01,
+      "expected_route": "auto_post",
+      "expected_gl": "7000",
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 772.81,
+          "amount": 772.81
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 257.6,
+          "amount": 257.6
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 257.6,
+          "amount": 257.6
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apple Inc",
+      "invoice_number": "INV-2026-009",
+      "date": "2026-06-28",
+      "po_number": "PO-8816",
+      "total_amount": 1288.01,
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 772.81,
+          "amount": 772.81
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 257.6,
+          "amount": 257.6
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 257.6,
+          "amount": 257.6
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.96,
+        "invoice_number": 0.96,
+        "date": 0.96,
+        "total_amount": 0.96,
+        "line_items": 0.96
+      }
+    }
+  },
+  {
+    "id": "INV-2026-010",
+    "test_case_type": "po_mismatch",
+    "description": "Synthetic scenario: po_mismatch",
+    "raw_text": "INVOICE #INV-2026-010\nVendor: Amazon Web Services\nDate: 2026-06-28\nPO: PO-9999-INVALID\nTotal: $2528.54",
+    "ground_truth": {
+      "vendor_name": "Amazon Web Services",
+      "vendor_id": "VEND-1001",
+      "invoice_number": "INV-2026-010",
+      "date": "2026-06-28",
+      "po_number": "PO-9999-INVALID",
+      "total_amount": 2528.54,
+      "expected_route": "human_review",
+      "expected_gl": "6000",
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2528.54,
+          "amount": 2528.54
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Amazon Web Services",
+      "invoice_number": "INV-2026-010",
+      "date": "2026-06-28",
+      "po_number": "PO-9999-INVALID",
+      "total_amount": 2528.54,
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2528.54,
+          "amount": 2528.54
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.98,
+        "invoice_number": 0.98,
+        "date": 0.98,
+        "total_amount": 0.98,
+        "line_items": 0.98
+      }
+    }
+  },
+  {
+    "id": "INV-2026-011",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-011\nVendor: Staples\nDate: 2026-06-28\nPO: PO-8809\nTotal: $2280.91",
+    "ground_truth": {
+      "vendor_name": "Staples Business Advantage",
+      "vendor_id": "VEND-1002",
+      "invoice_number": "INV-2026-011",
+      "date": "2026-06-28",
+      "po_number": "PO-8809",
+      "total_amount": 2280.91,
+      "expected_route": "auto_post",
+      "expected_gl": "6100",
+      "line_items": [
+        {
+          "description": "Staples Business Advantage Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1368.55,
+          "amount": 1368.55
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 456.18,
+          "amount": 456.18
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 456.18,
+          "amount": 456.18
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Staples",
+      "invoice_number": "INV-2026-011",
+      "date": "2026-06-28",
+      "po_number": "PO-8809",
+      "total_amount": 2280.91,
+      "line_items": [
+        {
+          "description": "Staples Business Advantage Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1368.55,
+          "amount": 1368.55
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 456.18,
+          "amount": 456.18
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 456.18,
+          "amount": 456.18
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.95,
+        "invoice_number": 0.95,
+        "date": 0.95,
+        "total_amount": 0.95,
+        "line_items": 0.95
+      }
+    }
+  },
+  {
+    "id": "INV-2026-012",
+    "test_case_type": "duplicate_invoice",
+    "description": "Synthetic scenario: duplicate_invoice",
+    "raw_text": "INVOICE #INV-HIST-9009\nVendor: Apex Advisory Services\nDate: 2026-06-28\nPO: PO-8811\nTotal: $2756.88",
+    "ground_truth": {
+      "vendor_name": "Apex Consulting Group",
+      "vendor_id": "VEND-1003",
+      "invoice_number": "INV-HIST-9009",
+      "date": "2026-06-28",
+      "po_number": "PO-8811",
+      "total_amount": 2756.88,
+      "expected_route": "human_review",
+      "expected_gl": "6200",
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2756.88,
+          "amount": 2756.88
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apex Advisory Services",
+      "invoice_number": "INV-HIST-9009",
+      "date": "2026-06-28",
+      "po_number": "PO-8811",
+      "total_amount": 2756.88,
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2756.88,
+          "amount": 2756.88
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.99,
+        "invoice_number": 0.99,
+        "date": 0.99,
+        "total_amount": 0.99,
+        "line_items": 0.99
+      }
+    }
+  },
+  {
+    "id": "INV-2026-013",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-013\nVendor: Staples Business Advantage\nDate: 2026-06-28\nPO: PO-8811\nTotal: $2602.05",
+    "ground_truth": {
+      "vendor_name": "Staples Business Advantage",
+      "vendor_id": "VEND-1002",
+      "invoice_number": "INV-2026-013",
+      "date": "2026-06-28",
+      "po_number": "PO-8811",
+      "total_amount": 2602.05,
+      "expected_route": "auto_post",
+      "expected_gl": "6100",
+      "line_items": [
+        {
+          "description": "Staples Business Advantage Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1561.23,
+          "amount": 1561.23
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 520.41,
+          "amount": 520.41
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 520.41,
+          "amount": 520.41
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Staples Business Advantage",
+      "invoice_number": "INV-2026-013",
+      "date": "2026-06-28",
+      "po_number": "PO-8811",
+      "total_amount": 2602.05,
+      "line_items": [
+        {
+          "description": "Staples Business Advantage Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1561.23,
+          "amount": 1561.23
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 520.41,
+          "amount": 520.41
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 520.41,
+          "amount": 520.41
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.94,
+        "invoice_number": 0.94,
+        "date": 0.94,
+        "total_amount": 0.94,
+        "line_items": 0.94
+      }
+    }
+  },
+  {
+    "id": "INV-2026-014",
+    "test_case_type": "po_mismatch",
+    "description": "Synthetic scenario: po_mismatch",
+    "raw_text": "INVOICE #INV-2026-014\nVendor: Staples Business Advantage\nDate: 2026-06-28\nPO: PO-9999-INVALID\nTotal: $1946.75",
+    "ground_truth": {
+      "vendor_name": "Staples Business Advantage",
+      "vendor_id": "VEND-1002",
+      "invoice_number": "INV-2026-014",
+      "date": "2026-06-28",
+      "po_number": "PO-9999-INVALID",
+      "total_amount": 1946.75,
+      "expected_route": "human_review",
+      "expected_gl": "6100",
+      "line_items": [
+        {
+          "description": "Staples Business Advantage Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1946.75,
+          "amount": 1946.75
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Staples Business Advantage",
+      "invoice_number": "INV-2026-014",
+      "date": "2026-06-28",
+      "po_number": "PO-9999-INVALID",
+      "total_amount": 1946.75,
+      "line_items": [
+        {
+          "description": "Staples Business Advantage Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1946.75,
+          "amount": 1946.75
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.98,
+        "invoice_number": 0.98,
+        "date": 0.98,
+        "total_amount": 0.98,
+        "line_items": 0.98
+      }
+    }
+  },
+  {
+    "id": "INV-2026-015",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-015\nVendor: Apex Advisory Services\nDate: 2026-06-28\nPO: PO-8806\nTotal: $154.83",
+    "ground_truth": {
+      "vendor_name": "Apex Consulting Group",
+      "vendor_id": "VEND-1003",
+      "invoice_number": "INV-2026-015",
+      "date": "2026-06-28",
+      "po_number": "PO-8806",
+      "total_amount": 154.82999999999998,
+      "expected_route": "auto_post",
+      "expected_gl": "6200",
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 103.22,
+          "amount": 103.22
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 51.61,
+          "amount": 51.61
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apex Advisory Services",
+      "invoice_number": "INV-2026-015",
+      "date": "2026-06-28",
+      "po_number": "PO-8806",
+      "total_amount": 154.82999999999998,
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 103.22,
+          "amount": 103.22
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 51.61,
+          "amount": 51.61
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.97,
+        "invoice_number": 0.97,
+        "date": 0.97,
+        "total_amount": 0.97,
+        "line_items": 0.97
+      }
+    }
+  },
+  {
+    "id": "INV-2026-016",
+    "test_case_type": "duplicate_invoice",
+    "description": "Synthetic scenario: duplicate_invoice",
+    "raw_text": "INVOICE #INV-HIST-9003\nVendor: AWS\nDate: 2026-06-28\nPO: PO-8801\nTotal: $948.98",
+    "ground_truth": {
+      "vendor_name": "Amazon Web Services",
+      "vendor_id": "VEND-1001",
+      "invoice_number": "INV-HIST-9003",
+      "date": "2026-06-28",
+      "po_number": "PO-8801",
+      "total_amount": 948.98,
+      "expected_route": "human_review",
+      "expected_gl": "6000",
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 948.98,
+          "amount": 948.98
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "AWS",
+      "invoice_number": "INV-HIST-9003",
+      "date": "2026-06-28",
+      "po_number": "PO-8801",
+      "total_amount": 948.98,
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 948.98,
+          "amount": 948.98
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.99,
+        "invoice_number": 0.99,
+        "date": 0.99,
+        "total_amount": 0.99,
+        "line_items": 0.99
+      }
+    }
+  },
+  {
+    "id": "INV-2026-017",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-017\nVendor: Apex Advisory Services\nDate: 2026-06-28\nPO: PO-8803\nTotal: $286.86",
+    "ground_truth": {
+      "vendor_name": "Apex Consulting Group",
+      "vendor_id": "VEND-1003",
+      "invoice_number": "INV-2026-017",
+      "date": "2026-06-28",
+      "po_number": "PO-8803",
+      "total_amount": 286.86,
+      "expected_route": "auto_post",
+      "expected_gl": "6200",
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 286.86,
+          "amount": 286.86
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apex Advisory Services",
+      "invoice_number": "INV-2026-017",
+      "date": "2026-06-28",
+      "po_number": "PO-8803",
+      "total_amount": 286.86,
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 286.86,
+          "amount": 286.86
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.93,
+        "invoice_number": 0.93,
+        "date": 0.93,
+        "total_amount": 0.93,
+        "line_items": 0.93
+      }
+    }
+  },
+  {
+    "id": "INV-2026-018",
+    "test_case_type": "high_dollar_ceiling",
+    "description": "Synthetic scenario: high_dollar_ceiling",
+    "raw_text": "INVOICE #INV-2026-018\nVendor: Acme Ads\nDate: 2026-06-28\nPO: PO-8802\nTotal: $11539.96",
+    "ground_truth": {
+      "vendor_name": "Acme Marketing Solutions",
+      "vendor_id": "VEND-1005",
+      "invoice_number": "INV-2026-018",
+      "date": "2026-06-28",
+      "po_number": "PO-8802",
+      "total_amount": 11539.96,
+      "expected_route": "human_review",
+      "expected_gl": "6500",
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 11539.96,
+          "amount": 11539.96
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Acme Ads",
+      "invoice_number": "INV-2026-018",
+      "date": "2026-06-28",
+      "po_number": "PO-8802",
+      "total_amount": 11539.96,
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 11539.96,
+          "amount": 11539.96
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.96,
+        "invoice_number": 0.96,
+        "date": 0.96,
+        "total_amount": 0.96,
+        "line_items": 0.96
+      }
+    }
+  },
+  {
+    "id": "INV-2026-019",
+    "test_case_type": "low_confidence",
+    "description": "Synthetic scenario: low_confidence",
+    "raw_text": "INVOICE #INV-2026-019\nVendor: Acme Ads\nDate: 2026-06-28\nPO: PO-8818\nTotal: $2296.75",
+    "ground_truth": {
+      "vendor_name": "Acme Marketing Solutions",
+      "vendor_id": "VEND-1005",
+      "invoice_number": "INV-2026-019",
+      "date": "2026-06-28",
+      "po_number": "PO-8818",
+      "total_amount": 2296.75,
+      "expected_route": "human_review",
+      "expected_gl": "6500",
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2296.75,
+          "amount": 2296.75
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Unknown Entity",
+      "invoice_number": "INV-2026-019",
+      "date": "2026-06-28",
+      "po_number": "PO-8818",
+      "total_amount": 2296.75,
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2296.75,
+          "amount": 2296.75
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.68,
+        "invoice_number": 0.68,
+        "date": 0.68,
+        "total_amount": 0.68,
+        "line_items": 0.68
+      }
+    }
+  },
+  {
+    "id": "INV-2026-020",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-020\nVendor: Amazon Web Services\nDate: 2026-06-28\nPO: N/A\nTotal: $682.65",
+    "ground_truth": {
+      "vendor_name": "Amazon Web Services",
+      "vendor_id": "VEND-1001",
+      "invoice_number": "INV-2026-020",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 682.65,
+      "expected_route": "auto_post",
+      "expected_gl": "6000",
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 409.59,
+          "amount": 409.59
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 136.53,
+          "amount": 136.53
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 136.53,
+          "amount": 136.53
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Amazon Web Services",
+      "invoice_number": "INV-2026-020",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 682.65,
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 409.59,
+          "amount": 409.59
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 136.53,
+          "amount": 136.53
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 136.53,
+          "amount": 136.53
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.92,
+        "invoice_number": 0.92,
+        "date": 0.92,
+        "total_amount": 0.92,
+        "line_items": 0.92
+      }
+    }
+  },
+  {
+    "id": "INV-2026-021",
+    "test_case_type": "low_confidence",
+    "description": "Synthetic scenario: low_confidence",
+    "raw_text": "INVOICE #INV-2026-021\nVendor: Apex Advisory Services\nDate: 2026-06-28\nPO: PO-8804\nTotal: $2449.79",
+    "ground_truth": {
+      "vendor_name": "Apex Consulting Group",
+      "vendor_id": "VEND-1003",
+      "invoice_number": "INV-2026-021",
+      "date": "2026-06-28",
+      "po_number": "PO-8804",
+      "total_amount": 2449.79,
+      "expected_route": "human_review",
+      "expected_gl": "6200",
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1469.87,
+          "amount": 1469.87
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 489.96,
+          "amount": 489.96
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 489.96,
+          "amount": 489.96
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Unknown Entity",
+      "invoice_number": "INV-2026-021",
+      "date": "2026-06-28",
+      "po_number": "PO-8804",
+      "total_amount": 2449.79,
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1469.87,
+          "amount": 1469.87
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 489.96,
+          "amount": 489.96
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 489.96,
+          "amount": 489.96
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.57,
+        "invoice_number": 0.57,
+        "date": 0.57,
+        "total_amount": 0.57,
+        "line_items": 0.57
+      }
+    }
+  },
+  {
+    "id": "INV-2026-022",
+    "test_case_type": "low_confidence",
+    "description": "Synthetic scenario: low_confidence",
+    "raw_text": "INVOICE #INV-2026-022\nVendor: Apple Inc\nDate: 2026-06-28\nPO: PO-8814\nTotal: $1432.96",
+    "ground_truth": {
+      "vendor_name": "Apple Hardware Direct",
+      "vendor_id": "VEND-1004",
+      "invoice_number": "INV-2026-022",
+      "date": "2026-06-28",
+      "po_number": "PO-8814",
+      "total_amount": 1432.96,
+      "expected_route": "human_review",
+      "expected_gl": "7000",
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 859.78,
+          "amount": 859.78
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 286.59,
+          "amount": 286.59
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 286.59,
+          "amount": 286.59
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Unknown Entity",
+      "invoice_number": "INV-2026-022",
+      "date": "2026-06-28",
+      "po_number": "PO-8814",
+      "total_amount": 1432.96,
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 859.78,
+          "amount": 859.78
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 286.59,
+          "amount": 286.59
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 286.59,
+          "amount": 286.59
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.6,
+        "invoice_number": 0.6,
+        "date": 0.6,
+        "total_amount": 0.6,
+        "line_items": 0.6
+      }
+    }
+  },
+  {
+    "id": "INV-2026-023",
+    "test_case_type": "high_dollar_ceiling",
+    "description": "Synthetic scenario: high_dollar_ceiling",
+    "raw_text": "INVOICE #INV-2026-023\nVendor: Apple Inc\nDate: 2026-06-28\nPO: PO-8819\nTotal: $5226.75",
+    "ground_truth": {
+      "vendor_name": "Apple Hardware Direct",
+      "vendor_id": "VEND-1004",
+      "invoice_number": "INV-2026-023",
+      "date": "2026-06-28",
+      "po_number": "PO-8819",
+      "total_amount": 5226.75,
+      "expected_route": "human_review",
+      "expected_gl": "7000",
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3136.05,
+          "amount": 3136.05
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 1045.35,
+          "amount": 1045.35
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 1045.35,
+          "amount": 1045.35
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apple Inc",
+      "invoice_number": "INV-2026-023",
+      "date": "2026-06-28",
+      "po_number": "PO-8819",
+      "total_amount": 5226.75,
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3136.05,
+          "amount": 3136.05
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 1045.35,
+          "amount": 1045.35
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 1045.35,
+          "amount": 1045.35
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.93,
+        "invoice_number": 0.93,
+        "date": 0.93,
+        "total_amount": 0.93,
+        "line_items": 0.93
+      }
+    }
+  },
+  {
+    "id": "INV-2026-024",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-024\nVendor: Acme Marketing Solutions\nDate: 2026-06-28\nPO: PO-8808\nTotal: $1488.15",
+    "ground_truth": {
+      "vendor_name": "Acme Marketing Solutions",
+      "vendor_id": "VEND-1005",
+      "invoice_number": "INV-2026-024",
+      "date": "2026-06-28",
+      "po_number": "PO-8808",
+      "total_amount": 1488.15,
+      "expected_route": "auto_post",
+      "expected_gl": "6500",
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 892.89,
+          "amount": 892.89
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 297.63,
+          "amount": 297.63
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 297.63,
+          "amount": 297.63
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Acme Marketing Solutions",
+      "invoice_number": "INV-2026-024",
+      "date": "2026-06-28",
+      "po_number": "PO-8808",
+      "total_amount": 1488.15,
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 892.89,
+          "amount": 892.89
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 297.63,
+          "amount": 297.63
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 297.63,
+          "amount": 297.63
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.98,
+        "invoice_number": 0.98,
+        "date": 0.98,
+        "total_amount": 0.98,
+        "line_items": 0.98
+      }
+    }
+  },
+  {
+    "id": "INV-2026-025",
+    "test_case_type": "duplicate_invoice",
+    "description": "Synthetic scenario: duplicate_invoice",
+    "raw_text": "INVOICE #INV-HIST-9019\nVendor: Apex Advisory Services\nDate: 2026-06-28\nPO: PO-8827\nTotal: $3117.07",
+    "ground_truth": {
+      "vendor_name": "Apex Consulting Group",
+      "vendor_id": "VEND-1003",
+      "invoice_number": "INV-HIST-9019",
+      "date": "2026-06-28",
+      "po_number": "PO-8827",
+      "total_amount": 3117.07,
+      "expected_route": "human_review",
+      "expected_gl": "6200",
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3117.07,
+          "amount": 3117.07
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apex Advisory Services",
+      "invoice_number": "INV-HIST-9019",
+      "date": "2026-06-28",
+      "po_number": "PO-8827",
+      "total_amount": 3117.07,
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3117.07,
+          "amount": 3117.07
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.93,
+        "invoice_number": 0.93,
+        "date": 0.93,
+        "total_amount": 0.93,
+        "line_items": 0.93
+      }
+    }
+  },
+  {
+    "id": "INV-2026-026",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-026\nVendor: Amazon Web Services Inc\nDate: 2026-06-28\nPO: N/A\nTotal: $2003.24",
+    "ground_truth": {
+      "vendor_name": "Amazon Web Services",
+      "vendor_id": "VEND-1001",
+      "invoice_number": "INV-2026-026",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 2003.24,
+      "expected_route": "auto_post",
+      "expected_gl": "6000",
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1335.49,
+          "amount": 1335.49
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 667.75,
+          "amount": 667.75
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Amazon Web Services Inc",
+      "invoice_number": "INV-2026-026",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 2003.24,
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1335.49,
+          "amount": 1335.49
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 667.75,
+          "amount": 667.75
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.94,
+        "invoice_number": 0.94,
+        "date": 0.94,
+        "total_amount": 0.94,
+        "line_items": 0.94
+      }
+    }
+  },
+  {
+    "id": "INV-2026-027",
+    "test_case_type": "low_confidence",
+    "description": "Synthetic scenario: low_confidence",
+    "raw_text": "INVOICE #INV-2026-027\nVendor: Apple Inc\nDate: 2026-06-28\nPO: PO-8816\nTotal: $1008.43",
+    "ground_truth": {
+      "vendor_name": "Apple Hardware Direct",
+      "vendor_id": "VEND-1004",
+      "invoice_number": "INV-2026-027",
+      "date": "2026-06-28",
+      "po_number": "PO-8816",
+      "total_amount": 1008.43,
+      "expected_route": "human_review",
+      "expected_gl": "7000",
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 672.29,
+          "amount": 672.29
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 336.14,
+          "amount": 336.14
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Unknown Entity",
+      "invoice_number": "INV-2026-027",
+      "date": "2026-06-28",
+      "po_number": "PO-8816",
+      "total_amount": 1008.43,
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 672.29,
+          "amount": 672.29
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 336.14,
+          "amount": 336.14
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.62,
+        "invoice_number": 0.62,
+        "date": 0.62,
+        "total_amount": 0.62,
+        "line_items": 0.62
+      }
+    }
+  },
+  {
+    "id": "INV-2026-028",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-028\nVendor: Acme Marketing Solutions\nDate: 2026-06-28\nPO: N/A\nTotal: $4666.75",
+    "ground_truth": {
+      "vendor_name": "Acme Marketing Solutions",
+      "vendor_id": "VEND-1005",
+      "invoice_number": "INV-2026-028",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 4666.75,
+      "expected_route": "auto_post",
+      "expected_gl": "6500",
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 4666.75,
+          "amount": 4666.75
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Acme Marketing Solutions",
+      "invoice_number": "INV-2026-028",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 4666.75,
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 4666.75,
+          "amount": 4666.75
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.95,
+        "invoice_number": 0.95,
+        "date": 0.95,
+        "total_amount": 0.95,
+        "line_items": 0.95
+      }
+    }
+  },
+  {
+    "id": "INV-2026-029",
+    "test_case_type": "high_dollar_ceiling",
+    "description": "Synthetic scenario: high_dollar_ceiling",
+    "raw_text": "INVOICE #INV-2026-029\nVendor: Apple Inc\nDate: 2026-06-28\nPO: PO-8828\nTotal: $12383.79",
+    "ground_truth": {
+      "vendor_name": "Apple Hardware Direct",
+      "vendor_id": "VEND-1004",
+      "invoice_number": "INV-2026-029",
+      "date": "2026-06-28",
+      "po_number": "PO-8828",
+      "total_amount": 12383.79,
+      "expected_route": "human_review",
+      "expected_gl": "7000",
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 12383.79,
+          "amount": 12383.79
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apple Inc",
+      "invoice_number": "INV-2026-029",
+      "date": "2026-06-28",
+      "po_number": "PO-8828",
+      "total_amount": 12383.79,
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 12383.79,
+          "amount": 12383.79
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.97,
+        "invoice_number": 0.97,
+        "date": 0.97,
+        "total_amount": 0.97,
+        "line_items": 0.97
+      }
+    }
+  },
+  {
+    "id": "INV-2026-030",
+    "test_case_type": "high_dollar_ceiling",
+    "description": "Synthetic scenario: high_dollar_ceiling",
+    "raw_text": "INVOICE #INV-2026-030\nVendor: Apex Advisory Services\nDate: 2026-06-28\nPO: PO-8819\nTotal: $6005.90",
+    "ground_truth": {
+      "vendor_name": "Apex Consulting Group",
+      "vendor_id": "VEND-1003",
+      "invoice_number": "INV-2026-030",
+      "date": "2026-06-28",
+      "po_number": "PO-8819",
+      "total_amount": 6005.9,
+      "expected_route": "human_review",
+      "expected_gl": "6200",
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3603.54,
+          "amount": 3603.54
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 1201.18,
+          "amount": 1201.18
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 1201.18,
+          "amount": 1201.18
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apex Advisory Services",
+      "invoice_number": "INV-2026-030",
+      "date": "2026-06-28",
+      "po_number": "PO-8819",
+      "total_amount": 6005.9,
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3603.54,
+          "amount": 3603.54
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 1201.18,
+          "amount": 1201.18
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 1201.18,
+          "amount": 1201.18
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.96,
+        "invoice_number": 0.96,
+        "date": 0.96,
+        "total_amount": 0.96,
+        "line_items": 0.96
+      }
+    }
+  },
+  {
+    "id": "INV-2026-031",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-031\nVendor: Amazon Web Services\nDate: 2026-06-28\nPO: N/A\nTotal: $1850.19",
+    "ground_truth": {
+      "vendor_name": "Amazon Web Services",
+      "vendor_id": "VEND-1001",
+      "invoice_number": "INV-2026-031",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 1850.19,
+      "expected_route": "auto_post",
+      "expected_gl": "6000",
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1233.46,
+          "amount": 1233.46
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 616.73,
+          "amount": 616.73
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Amazon Web Services",
+      "invoice_number": "INV-2026-031",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 1850.19,
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1233.46,
+          "amount": 1233.46
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 616.73,
+          "amount": 616.73
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.95,
+        "invoice_number": 0.95,
+        "date": 0.95,
+        "total_amount": 0.95,
+        "line_items": 0.95
+      }
+    }
+  },
+  {
+    "id": "INV-2026-032",
+    "test_case_type": "high_dollar_ceiling",
+    "description": "Synthetic scenario: high_dollar_ceiling",
+    "raw_text": "INVOICE #INV-2026-032\nVendor: Apex Advisory Services\nDate: 2026-06-28\nPO: PO-8824\nTotal: $5527.83",
+    "ground_truth": {
+      "vendor_name": "Apex Consulting Group",
+      "vendor_id": "VEND-1003",
+      "invoice_number": "INV-2026-032",
+      "date": "2026-06-28",
+      "po_number": "PO-8824",
+      "total_amount": 5527.83,
+      "expected_route": "human_review",
+      "expected_gl": "6200",
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3685.22,
+          "amount": 3685.22
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 1842.61,
+          "amount": 1842.61
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apex Advisory Services",
+      "invoice_number": "INV-2026-032",
+      "date": "2026-06-28",
+      "po_number": "PO-8824",
+      "total_amount": 5527.83,
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3685.22,
+          "amount": 3685.22
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 1842.61,
+          "amount": 1842.61
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.96,
+        "invoice_number": 0.96,
+        "date": 0.96,
+        "total_amount": 0.96,
+        "line_items": 0.96
+      }
+    }
+  },
+  {
+    "id": "INV-2026-033",
+    "test_case_type": "high_dollar_ceiling",
+    "description": "Synthetic scenario: high_dollar_ceiling",
+    "raw_text": "INVOICE #INV-2026-033\nVendor: AWS\nDate: 2026-06-28\nPO: PO-8812\nTotal: $8573.52",
+    "ground_truth": {
+      "vendor_name": "Amazon Web Services",
+      "vendor_id": "VEND-1001",
+      "invoice_number": "INV-2026-033",
+      "date": "2026-06-28",
+      "po_number": "PO-8812",
+      "total_amount": 8573.52,
+      "expected_route": "human_review",
+      "expected_gl": "6000",
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 5715.68,
+          "amount": 5715.68
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 2857.84,
+          "amount": 2857.84
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "AWS",
+      "invoice_number": "INV-2026-033",
+      "date": "2026-06-28",
+      "po_number": "PO-8812",
+      "total_amount": 8573.52,
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 5715.68,
+          "amount": 5715.68
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 2857.84,
+          "amount": 2857.84
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.96,
+        "invoice_number": 0.96,
+        "date": 0.96,
+        "total_amount": 0.96,
+        "line_items": 0.96
+      }
+    }
+  },
+  {
+    "id": "INV-2026-034",
+    "test_case_type": "duplicate_invoice",
+    "description": "Synthetic scenario: duplicate_invoice",
+    "raw_text": "INVOICE #INV-HIST-9005\nVendor: Acme Ads\nDate: 2026-06-28\nPO: N/A\nTotal: $2467.10",
+    "ground_truth": {
+      "vendor_name": "Acme Marketing Solutions",
+      "vendor_id": "VEND-1005",
+      "invoice_number": "INV-HIST-9005",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 2467.1,
+      "expected_route": "human_review",
+      "expected_gl": "6500",
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1644.73,
+          "amount": 1644.73
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 822.37,
+          "amount": 822.37
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Acme Ads",
+      "invoice_number": "INV-HIST-9005",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 2467.1,
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1644.73,
+          "amount": 1644.73
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 822.37,
+          "amount": 822.37
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.94,
+        "invoice_number": 0.94,
+        "date": 0.94,
+        "total_amount": 0.94,
+        "line_items": 0.94
+      }
+    }
+  },
+  {
+    "id": "INV-2026-035",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-035\nVendor: Apex Consulting Group\nDate: 2026-06-28\nPO: PO-8803\nTotal: $958.90",
+    "ground_truth": {
+      "vendor_name": "Apex Consulting Group",
+      "vendor_id": "VEND-1003",
+      "invoice_number": "INV-2026-035",
+      "date": "2026-06-28",
+      "po_number": "PO-8803",
+      "total_amount": 958.9,
+      "expected_route": "auto_post",
+      "expected_gl": "6200",
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 639.27,
+          "amount": 639.27
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 319.63,
+          "amount": 319.63
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apex Consulting Group",
+      "invoice_number": "INV-2026-035",
+      "date": "2026-06-28",
+      "po_number": "PO-8803",
+      "total_amount": 958.9,
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 639.27,
+          "amount": 639.27
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 319.63,
+          "amount": 319.63
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.96,
+        "invoice_number": 0.96,
+        "date": 0.96,
+        "total_amount": 0.96,
+        "line_items": 0.96
+      }
+    }
+  },
+  {
+    "id": "INV-2026-036",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-036\nVendor: Acme Marketing Solutions\nDate: 2026-06-28\nPO: N/A\nTotal: $3150.96",
+    "ground_truth": {
+      "vendor_name": "Acme Marketing Solutions",
+      "vendor_id": "VEND-1005",
+      "invoice_number": "INV-2026-036",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 3150.96,
+      "expected_route": "auto_post",
+      "expected_gl": "6500",
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3150.96,
+          "amount": 3150.96
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Acme Marketing Solutions",
+      "invoice_number": "INV-2026-036",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 3150.96,
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3150.96,
+          "amount": 3150.96
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.99,
+        "invoice_number": 0.99,
+        "date": 0.99,
+        "total_amount": 0.99,
+        "line_items": 0.99
+      }
+    }
+  },
+  {
+    "id": "INV-2026-037",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-037\nVendor: Apex Consulting Group\nDate: 2026-06-28\nPO: PO-8816\nTotal: $4524.16",
+    "ground_truth": {
+      "vendor_name": "Apex Consulting Group",
+      "vendor_id": "VEND-1003",
+      "invoice_number": "INV-2026-037",
+      "date": "2026-06-28",
+      "po_number": "PO-8816",
+      "total_amount": 4524.16,
+      "expected_route": "auto_post",
+      "expected_gl": "6200",
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 4524.16,
+          "amount": 4524.16
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apex Consulting Group",
+      "invoice_number": "INV-2026-037",
+      "date": "2026-06-28",
+      "po_number": "PO-8816",
+      "total_amount": 4524.16,
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 4524.16,
+          "amount": 4524.16
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.96,
+        "invoice_number": 0.96,
+        "date": 0.96,
+        "total_amount": 0.96,
+        "line_items": 0.96
+      }
+    }
+  },
+  {
+    "id": "INV-2026-038",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-038\nVendor: Staples\nDate: 2026-06-28\nPO: PO-8803\nTotal: $2135.20",
+    "ground_truth": {
+      "vendor_name": "Staples Business Advantage",
+      "vendor_id": "VEND-1002",
+      "invoice_number": "INV-2026-038",
+      "date": "2026-06-28",
+      "po_number": "PO-8803",
+      "total_amount": 2135.2,
+      "expected_route": "auto_post",
+      "expected_gl": "6100",
+      "line_items": [
+        {
+          "description": "Staples Business Advantage Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1281.12,
+          "amount": 1281.12
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 427.04,
+          "amount": 427.04
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 427.04,
+          "amount": 427.04
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Staples",
+      "invoice_number": "INV-2026-038",
+      "date": "2026-06-28",
+      "po_number": "PO-8803",
+      "total_amount": 2135.2,
+      "line_items": [
+        {
+          "description": "Staples Business Advantage Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1281.12,
+          "amount": 1281.12
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 427.04,
+          "amount": 427.04
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 427.04,
+          "amount": 427.04
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.95,
+        "invoice_number": 0.95,
+        "date": 0.95,
+        "total_amount": 0.95,
+        "line_items": 0.95
+      }
+    }
+  },
+  {
+    "id": "INV-2026-039",
+    "test_case_type": "low_confidence",
+    "description": "Synthetic scenario: low_confidence",
+    "raw_text": "INVOICE #INV-2026-039\nVendor: Amazon Web Services\nDate: 2026-06-28\nPO: N/A\nTotal: $1672.25",
+    "ground_truth": {
+      "vendor_name": "Amazon Web Services",
+      "vendor_id": "VEND-1001",
+      "invoice_number": "INV-2026-039",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 1672.25,
+      "expected_route": "human_review",
+      "expected_gl": "6000",
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1003.35,
+          "amount": 1003.35
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 334.45,
+          "amount": 334.45
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 334.45,
+          "amount": 334.45
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Unknown Entity",
+      "invoice_number": "INV-2026-039",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 1672.25,
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1003.35,
+          "amount": 1003.35
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 334.45,
+          "amount": 334.45
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 334.45,
+          "amount": 334.45
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.72,
+        "invoice_number": 0.72,
+        "date": 0.72,
+        "total_amount": 0.72,
+        "line_items": 0.72
+      }
+    }
+  },
+  {
+    "id": "INV-2026-040",
+    "test_case_type": "duplicate_invoice",
+    "description": "Synthetic scenario: duplicate_invoice",
+    "raw_text": "INVOICE #INV-HIST-9012\nVendor: Staples Office Solutions\nDate: 2026-06-28\nPO: PO-8802\nTotal: $779.76",
+    "ground_truth": {
+      "vendor_name": "Staples Business Advantage",
+      "vendor_id": "VEND-1002",
+      "invoice_number": "INV-HIST-9012",
+      "date": "2026-06-28",
+      "po_number": "PO-8802",
+      "total_amount": 779.76,
+      "expected_route": "human_review",
+      "expected_gl": "6100",
+      "line_items": [
+        {
+          "description": "Staples Business Advantage Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 467.86,
+          "amount": 467.86
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 155.95,
+          "amount": 155.95
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 155.95,
+          "amount": 155.95
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Staples Office Solutions",
+      "invoice_number": "INV-HIST-9012",
+      "date": "2026-06-28",
+      "po_number": "PO-8802",
+      "total_amount": 779.76,
+      "line_items": [
+        {
+          "description": "Staples Business Advantage Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 467.86,
+          "amount": 467.86
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 155.95,
+          "amount": 155.95
+        },
+        {
+          "description": "Staples Business Advantage Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 155.95,
+          "amount": 155.95
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.95,
+        "invoice_number": 0.95,
+        "date": 0.95,
+        "total_amount": 0.95,
+        "line_items": 0.95
+      }
+    }
+  },
+  {
+    "id": "INV-2026-041",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-041\nVendor: Amazon Web Services\nDate: 2026-06-28\nPO: PO-8817\nTotal: $2218.18",
+    "ground_truth": {
+      "vendor_name": "Amazon Web Services",
+      "vendor_id": "VEND-1001",
+      "invoice_number": "INV-2026-041",
+      "date": "2026-06-28",
+      "po_number": "PO-8817",
+      "total_amount": 2218.18,
+      "expected_route": "auto_post",
+      "expected_gl": "6000",
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1478.79,
+          "amount": 1478.79
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 739.39,
+          "amount": 739.39
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Amazon Web Services",
+      "invoice_number": "INV-2026-041",
+      "date": "2026-06-28",
+      "po_number": "PO-8817",
+      "total_amount": 2218.18,
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1478.79,
+          "amount": 1478.79
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 739.39,
+          "amount": 739.39
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.97,
+        "invoice_number": 0.97,
+        "date": 0.97,
+        "total_amount": 0.97,
+        "line_items": 0.97
+      }
+    }
+  },
+  {
+    "id": "INV-2026-042",
+    "test_case_type": "low_confidence",
+    "description": "Synthetic scenario: low_confidence",
+    "raw_text": "INVOICE #INV-2026-042\nVendor: Amazon Web Services\nDate: 2026-06-28\nPO: PO-8817\nTotal: $1150.47",
+    "ground_truth": {
+      "vendor_name": "Amazon Web Services",
+      "vendor_id": "VEND-1001",
+      "invoice_number": "INV-2026-042",
+      "date": "2026-06-28",
+      "po_number": "PO-8817",
+      "total_amount": 1150.47,
+      "expected_route": "human_review",
+      "expected_gl": "6000",
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1150.47,
+          "amount": 1150.47
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Unknown Entity",
+      "invoice_number": "INV-2026-042",
+      "date": "2026-06-28",
+      "po_number": "PO-8817",
+      "total_amount": 1150.47,
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1150.47,
+          "amount": 1150.47
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.62,
+        "invoice_number": 0.62,
+        "date": 0.62,
+        "total_amount": 0.62,
+        "line_items": 0.62
+      }
+    }
+  },
+  {
+    "id": "INV-2026-043",
+    "test_case_type": "duplicate_invoice",
+    "description": "Synthetic scenario: duplicate_invoice",
+    "raw_text": "INVOICE #INV-HIST-9005\nVendor: Apple Hardware Direct\nDate: 2026-06-28\nPO: PO-8802\nTotal: $4235.67",
+    "ground_truth": {
+      "vendor_name": "Apple Hardware Direct",
+      "vendor_id": "VEND-1004",
+      "invoice_number": "INV-HIST-9005",
+      "date": "2026-06-28",
+      "po_number": "PO-8802",
+      "total_amount": 4235.67,
+      "expected_route": "human_review",
+      "expected_gl": "7000",
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 4235.67,
+          "amount": 4235.67
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apple Hardware Direct",
+      "invoice_number": "INV-HIST-9005",
+      "date": "2026-06-28",
+      "po_number": "PO-8802",
+      "total_amount": 4235.67,
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 4235.67,
+          "amount": 4235.67
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.92,
+        "invoice_number": 0.92,
+        "date": 0.92,
+        "total_amount": 0.92,
+        "line_items": 0.92
+      }
+    }
+  },
+  {
+    "id": "INV-2026-044",
+    "test_case_type": "low_confidence",
+    "description": "Synthetic scenario: low_confidence",
+    "raw_text": "INVOICE #INV-2026-044\nVendor: AWS\nDate: 2026-06-28\nPO: N/A\nTotal: $2576.61",
+    "ground_truth": {
+      "vendor_name": "Amazon Web Services",
+      "vendor_id": "VEND-1001",
+      "invoice_number": "INV-2026-044",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 2576.61,
+      "expected_route": "human_review",
+      "expected_gl": "6000",
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2576.61,
+          "amount": 2576.61
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Unknown Entity",
+      "invoice_number": "INV-2026-044",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 2576.61,
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2576.61,
+          "amount": 2576.61
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.57,
+        "invoice_number": 0.57,
+        "date": 0.57,
+        "total_amount": 0.57,
+        "line_items": 0.57
+      }
+    }
+  },
+  {
+    "id": "INV-2026-045",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-045\nVendor: Acme Ads\nDate: 2026-06-28\nPO: N/A\nTotal: $3291.63",
+    "ground_truth": {
+      "vendor_name": "Acme Marketing Solutions",
+      "vendor_id": "VEND-1005",
+      "invoice_number": "INV-2026-045",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 3291.63,
+      "expected_route": "auto_post",
+      "expected_gl": "6500",
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3291.63,
+          "amount": 3291.63
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Acme Ads",
+      "invoice_number": "INV-2026-045",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 3291.63,
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 3291.63,
+          "amount": 3291.63
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.94,
+        "invoice_number": 0.94,
+        "date": 0.94,
+        "total_amount": 0.94,
+        "line_items": 0.94
+      }
+    }
+  },
+  {
+    "id": "INV-2026-046",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-046\nVendor: Acme Ads\nDate: 2026-06-28\nPO: N/A\nTotal: $792.25",
+    "ground_truth": {
+      "vendor_name": "Acme Marketing Solutions",
+      "vendor_id": "VEND-1005",
+      "invoice_number": "INV-2026-046",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 792.25,
+      "expected_route": "auto_post",
+      "expected_gl": "6500",
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 528.17,
+          "amount": 528.17
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 264.08,
+          "amount": 264.08
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Acme Ads",
+      "invoice_number": "INV-2026-046",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 792.25,
+      "line_items": [
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 528.17,
+          "amount": 528.17
+        },
+        {
+          "description": "Acme Marketing Solutions Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 264.08,
+          "amount": 264.08
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.98,
+        "invoice_number": 0.98,
+        "date": 0.98,
+        "total_amount": 0.98,
+        "line_items": 0.98
+      }
+    }
+  },
+  {
+    "id": "INV-2026-047",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-047\nVendor: Amazon Web Services\nDate: 2026-06-28\nPO: N/A\nTotal: $2243.75",
+    "ground_truth": {
+      "vendor_name": "Amazon Web Services",
+      "vendor_id": "VEND-1001",
+      "invoice_number": "INV-2026-047",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 2243.75,
+      "expected_route": "auto_post",
+      "expected_gl": "6000",
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1346.25,
+          "amount": 1346.25
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 448.75,
+          "amount": 448.75
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 448.75,
+          "amount": 448.75
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Amazon Web Services",
+      "invoice_number": "INV-2026-047",
+      "date": "2026-06-28",
+      "po_number": null,
+      "total_amount": 2243.75,
+      "line_items": [
+        {
+          "description": "Amazon Web Services Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 1346.25,
+          "amount": 1346.25
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 448.75,
+          "amount": 448.75
+        },
+        {
+          "description": "Amazon Web Services Service / Product Item #3",
+          "qty": 1,
+          "unit_price": 448.75,
+          "amount": 448.75
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.99,
+        "invoice_number": 0.99,
+        "date": 0.99,
+        "total_amount": 0.99,
+        "line_items": 0.99
+      }
+    }
+  },
+  {
+    "id": "INV-2026-048",
+    "test_case_type": "high_dollar_ceiling",
+    "description": "Synthetic scenario: high_dollar_ceiling",
+    "raw_text": "INVOICE #INV-2026-048\nVendor: Staples Office Solutions\nDate: 2026-06-28\nPO: PO-8822\nTotal: $11348.81",
+    "ground_truth": {
+      "vendor_name": "Staples Business Advantage",
+      "vendor_id": "VEND-1002",
+      "invoice_number": "INV-2026-048",
+      "date": "2026-06-28",
+      "po_number": "PO-8822",
+      "total_amount": 11348.81,
+      "expected_route": "human_review",
+      "expected_gl": "6100",
+      "line_items": [
+        {
+          "description": "Staples Business Advantage Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 11348.81,
+          "amount": 11348.81
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Staples Office Solutions",
+      "invoice_number": "INV-2026-048",
+      "date": "2026-06-28",
+      "po_number": "PO-8822",
+      "total_amount": 11348.81,
+      "line_items": [
+        {
+          "description": "Staples Business Advantage Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 11348.81,
+          "amount": 11348.81
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.92,
+        "invoice_number": 0.92,
+        "date": 0.92,
+        "total_amount": 0.92,
+        "line_items": 0.92
+      }
+    }
+  },
+  {
+    "id": "INV-2026-049",
+    "test_case_type": "high_dollar_ceiling",
+    "description": "Synthetic scenario: high_dollar_ceiling",
+    "raw_text": "INVOICE #INV-2026-049\nVendor: Apex Consulting Group\nDate: 2026-06-28\nPO: PO-8826\nTotal: $7097.33",
+    "ground_truth": {
+      "vendor_name": "Apex Consulting Group",
+      "vendor_id": "VEND-1003",
+      "invoice_number": "INV-2026-049",
+      "date": "2026-06-28",
+      "po_number": "PO-8826",
+      "total_amount": 7097.33,
+      "expected_route": "human_review",
+      "expected_gl": "6200",
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 4731.55,
+          "amount": 4731.55
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 2365.78,
+          "amount": 2365.78
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apex Consulting Group",
+      "invoice_number": "INV-2026-049",
+      "date": "2026-06-28",
+      "po_number": "PO-8826",
+      "total_amount": 7097.33,
+      "line_items": [
+        {
+          "description": "Apex Consulting Group Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 4731.55,
+          "amount": 4731.55
+        },
+        {
+          "description": "Apex Consulting Group Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 2365.78,
+          "amount": 2365.78
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.93,
+        "invoice_number": 0.93,
+        "date": 0.93,
+        "total_amount": 0.93,
+        "line_items": 0.93
+      }
+    }
+  },
+  {
+    "id": "INV-2026-050",
+    "test_case_type": "clean_auto_post",
+    "description": "Synthetic scenario: clean_auto_post",
+    "raw_text": "INVOICE #INV-2026-050\nVendor: Apple Store\nDate: 2026-06-28\nPO: PO-8801\nTotal: $3107.43",
+    "ground_truth": {
+      "vendor_name": "Apple Hardware Direct",
+      "vendor_id": "VEND-1004",
+      "invoice_number": "INV-2026-050",
+      "date": "2026-06-28",
+      "po_number": "PO-8801",
+      "total_amount": 3107.43,
+      "expected_route": "auto_post",
+      "expected_gl": "7000",
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2071.62,
+          "amount": 2071.62
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 1035.81,
+          "amount": 1035.81
+        }
+      ]
+    },
+    "simulated_extraction": {
+      "vendor_name": "Apple Store",
+      "invoice_number": "INV-2026-050",
+      "date": "2026-06-28",
+      "po_number": "PO-8801",
+      "total_amount": 3107.43,
+      "line_items": [
+        {
+          "description": "Apple Hardware Direct Service / Product Item #1",
+          "qty": 1,
+          "unit_price": 2071.62,
+          "amount": 2071.62
+        },
+        {
+          "description": "Apple Hardware Direct Service / Product Item #2",
+          "qty": 1,
+          "unit_price": 1035.81,
+          "amount": 1035.81
+        }
+      ],
+      "confidence": {
+        "vendor_name": 0.95,
+        "invoice_number": 0.95,
+        "date": 0.95,
+        "total_amount": 0.95,
+        "line_items": 0.95
+      }
+    }
+  }
+]

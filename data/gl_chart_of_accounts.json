@@ -1,0 +1,32 @@
+[
+  {
+    "account_number": "6000",
+    "account_name": "Cloud & Hosting Services",
+    "category": "Technology",
+    "default_department": "Engineering"
+  },
+  {
+    "account_number": "6100",
+    "account_name": "Office Supplies & Software",
+    "category": "Operations",
+    "default_department": "Administration"
+  },
+  {
+    "account_number": "6200",
+    "account_name": "Professional & Consulting Services",
+    "category": "Professional Services",
+    "default_department": "Legal & Finance"
+  },
+  {
+    "account_number": "7000",
+    "account_name": "Computer Equipment & Hardware",
+    "category": "Capital Expenses",
+    "default_department": "IT Infrastructure"
+  },
+  {
+    "account_number": "6500",
+    "account_name": "Marketing & Advertising",
+    "category": "Sales & Marketing",
+    "default_department": "Marketing"
+  }
+]
