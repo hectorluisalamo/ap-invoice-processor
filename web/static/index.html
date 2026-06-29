@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AP Copilot - Autonomous AP Agent Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header & ROI Readout Banner -->
+        <header class="top-header">
+            <div class="logo-area">
+                <div class="logo-badge">AP</div>
+                <div>
+                    <h1>AP Copilot <span class="badge-tag">ADK 2.0 Agent Graph</span></h1>
+                    <p class="subtitle">Autonomous Invoice Processing with Human Gate Safety Rails</p>
+                </div>
+            </div>
+
+            <div class="roi-metrics-card">
+                <div class="metric-box">
+                    <span class="metric-label">Manual Processing</span>
+                    <span class="metric-value danger-text">$14.50 <small>/inv</small></span>
+                </div>
+                <div class="metric-arrow">➔</div>
+                <div class="metric-box">
+                    <span class="metric-label">Agent Automated</span>
+                    <span class="metric-value success-text">$2.36 <small>/inv</small></span>
+                </div>
+                <div class="metric-divider"></div>
+                <div class="metric-box">
+                    <span class="metric-label">Cost Savings</span>
+                    <span class="metric-value highlight-text">83.7% <small>ROI</small></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="dashboard-grid">
+            <!-- Left Column: Controls & Invoice Selector -->
+            <section class="panel left-panel">
+                <div class="panel-header">
+                    <h2>📦 Invoice Drop & Intake</h2>
+                    <span class="step-badge">Phase 1 Data</span>
+                </div>
+                <p class="panel-desc">Select a synthetic invoice scenario to trigger the linear ADK graph:</p>
+                
+                <div id="invoice-list" class="invoice-list-container">
+                    <div class="loading-spinner">Loading synthetic test suite...</div>
+                </div>
+
+                <div class="skill-box-card">
+                    <div class="skill-header">
+                        <span class="skill-icon">🧠</span>
+                        <h4>Portable Skill: SKILL.md</h4>
+                    </div>
+                    <p>Loaded rules: <strong>$5,000 Auto-Post Ceiling</strong>, Min Confidence <strong>0.85</strong>, Vendor-to-GL account tables.</p>
+                </div>
+            </section>
+
+            <!-- Middle Column: Dynamic Agent Node Graph & Triage Desk -->
+            <section class="panel middle-panel">
+                <div class="panel-header">
+                    <h2>⚡ Live Agent Workflow Graph</h2>
+                    <span id="session-status-badge" class="status-badge idle">Ready</span>
+                </div>
+
+                <!-- Visual Node Pipeline -->
+                <div class="pipeline-visualizer">
+                    <div class="node-step" id="node-Intake">
+                        <div class="node-icon">📥</div>
+                        <div class="node-title">Intake</div>
+                        <div class="node-sub">Raw -> State</div>
+                    </div>
+                    <div class="pipeline-connector"></div>
+                    <div class="node-step" id="node-Extractor">
+                        <div class="node-icon">👁️</div>
+                        <div class="node-title">Extractor</div>
+                        <div class="node-sub">Vision Parse</div>
+                    </div>
+                    <div class="pipeline-connector"></div>
+                    <div class="node-step" id="node-GL-Coder">
+                        <div class="node-icon">🏷️</div>
+                        <div class="node-title">GL-Coder</div>
+                        <div class="node-sub">SKILL.md Rules</div>
+                    </div>
+                    <div class="pipeline-connector"></div>
+                    <div class="node-step" id="node-Policy-Validator">
+                        <div class="node-icon">🛡️</div>
+                        <div class="node-title">Validator</div>
+                        <div class="node-sub">Compliance</div>
+                    </div>
+                    <div class="pipeline-connector"></div>
+                    <div class="node-step warning-gate" id="node-Human Gate">
+                        <div class="node-icon">🧑</div>
+                        <div class="node-title">Human Gate</div>
+                        <div class="node-sub">Safety Rail</div>
+                    </div>
+                    <div class="pipeline-connector"></div>
+                    <div class="node-step success-node" id="node-Poster">
+                        <div class="node-icon">🏦</div>
+                        <div class="node-title">Poster</div>
+                        <div class="node-sub">NetSuite ERP</div>
+                    </div>
+                </div>
+
+                <!-- Human Gate Triage Desk (Shows when paused) -->
+                <div id="triage-desk" class="triage-desk-card hidden">
+                    <div class="triage-banner">
+                        <span class="alert-pulse"></span>
+                        <div>
+                            <h3>🧑 Human Gate Intervention Required</h3>
+                            <p>This invoice tripped policy validation and requires human triage before money is moved.</p>
+                        </div>
+                    </div>
+
+                    <div class="triage-details">
+                        <div id="triage-flags-list" class="flags-tags"></div>
+                        <div class="triage-form">
+                            <label for="triage-reason">Reviewer Reasoning / Comments:</label>
+                            <input type="text" id="triage-reason" placeholder="e.g., Checked PO match with procurement and approved expense." value="Verified vendor and approved for NetSuite posting.">
+                            <div class="triage-actions">
+                                <button id="btn-approve" class="btn btn-approve">✅ Approve & Post</button>
+                                <button id="btn-reject" class="btn btn-reject">❌ Reject Invoice</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Execution Output Summary -->
+                <div id="invoice-details-card" class="details-card">
+                    <div class="placeholder-msg">Select an invoice from the left panel and click <strong>Run Workflow</strong> to view state evolution.</div>
+                </div>
+            </section>
+
+            <!-- Right Column: Audit Trail & Decision Inspector -->
+            <section class="panel right-panel">
+                <div class="panel-header">
+                    <h2>📜 Decision Trail & Audit Log</h2>
+                    <span class="trail-count" id="trail-count">0 Steps</span>
+                </div>
+                <p class="panel-desc">Every node's reasoning, confidence, and action recorded for compliance audit:</p>
+
+                <div id="audit-trail-container" class="audit-trail-timeline">
+                    <div class="empty-trail">No active workflow trail.</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
