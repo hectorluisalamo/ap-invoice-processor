@@ -81,25 +81,25 @@ async def run_invoice(req: RunInvoiceRequest):
         "interrupt_id": None
     }
 
-    asyncio.create_task(_execute_workflow(session_id, adk_session.id, selected))
+    asyncio.create_task(_execute_workflow(session_id, adk_session.id, payload=selected))
     return {"session_id": session_id, "status": "started"}
 
-async def _execute_workflow(session_id: str, adk_session_id: str, invoice_payload: dict, resume_inputs: dict = None):
+async def _execute_workflow(session_id: str, adk_session_id: str, payload: dict = None, state_delta: dict = None):
     sess_info = ACTIVE_SESSIONS.get(session_id)
     if not sess_info:
         return
 
     try:
         new_msg = None
-        if not resume_inputs:
-            input_text = json.dumps(invoice_payload)
+        if payload:
+            input_text = json.dumps(payload)
             new_msg = types.Content(role="user", parts=[types.Part.from_text(text=input_text)])
 
         async for event in runner.run_async(
             user_id="demo_user",
             session_id=adk_session_id,
             new_message=new_msg,
-            resume_inputs=resume_inputs
+            state_delta=state_delta
         ):
             if isinstance(event, RequestInput):
                 sess_info["status"] = "paused"
@@ -134,19 +134,13 @@ async def submit_triage(session_id: str, req: HumanTriageRequest):
     if not sess_info.get("is_paused_at_gate"):
         raise HTTPException(status_code=400, detail="Session is not paused at Human Gate")
 
-    interrupt_id = sess_info.get("interrupt_id", "human_triage")
-    resume_data = {
-        interrupt_id: {
-            "decision": req.decision,
-            "reasoning": req.reasoning or f"Reviewed and {req.decision} via dashboard triage."
-        }
-    }
+    st = sess_info.get("invoice_state", {})
+    if isinstance(st, dict):
+        st["human_decision"] = req.decision
+        st["human_reasoning"] = req.reasoning or f"Reviewed and {req.decision} via dashboard triage."
 
     sess_info["status"] = "resuming"
     sess_info["is_paused_at_gate"] = False
 
-    invoices = load_synthetic_invoices()
-    selected = next((inv for inv in invoices if inv["id"] == sess_info["invoice_id"]), {})
-
-    asyncio.create_task(_execute_workflow(session_id, sess_info["adk_session_id"], selected, resume_inputs=resume_data))
+    asyncio.create_task(_execute_workflow(session_id, sess_info["adk_session_id"], payload=None, state_delta={"invoice_state": st}))
     return {"status": "resumed", "decision": req.decision}

@@ -257,34 +257,35 @@ async def human_gate_node(ctx: Context, node_input: Any) -> AsyncGenerator[Any, 
     state_dict = node_input if isinstance(node_input, dict) and "invoice_id" in node_input else ctx.state.get("invoice_state", {})
     invoice_state = InvoiceState(**state_dict)
 
-    if not ctx.resume_inputs or "human_triage" not in ctx.resume_inputs:
+    decision = invoice_state.human_decision
+    reasoning = invoice_state.human_reasoning
+
+    if not decision and getattr(ctx, "resume_inputs", None) and "human_triage" in ctx.resume_inputs:
+        triage_data = ctx.resume_inputs["human_triage"]
+        if isinstance(triage_data, dict):
+            decision = triage_data.get("decision", "approved").lower()
+            reasoning = triage_data.get("reasoning", "Reviewed via triage portal.")
+        elif isinstance(triage_data, str):
+            decision = triage_data.lower()
+            reasoning = "Reviewed via triage portal."
+
+    if not decision:
         yield RequestInput(
             interrupt_id="human_triage",
             message=f"HUMAN GATE PAUSE: Invoice {invoice_state.invoice_id} (${invoice_state.extracted_fields.total_amount:.2f}) requires human review."
         )
         return
 
-    triage_data = ctx.resume_inputs["human_triage"]
-    if isinstance(triage_data, str):
-        decision = triage_data.lower()
-        reasoning = "Reviewed and decided via triage input."
-    elif isinstance(triage_data, dict):
-        decision = triage_data.get("decision", "approved").lower()
-        reasoning = triage_data.get("reasoning", "Reviewed via triage portal.")
-    else:
-        decision = "approved"
-        reasoning = "Default approved on resume."
-
     invoice_state.human_decision = decision
-    invoice_state.human_reasoning = reasoning
+    invoice_state.human_reasoning = reasoning or "Approved by reviewer."
 
     step = DecisionStep(
         step_index=len(invoice_state.decision_trail) + 1,
         node_name="Human Gate",
         action="Interactive Human-in-the-Loop Triage",
-        reasoning=f"Human reviewer submitted decision: '{decision.upper()}'. Reasoning: {reasoning}",
+        reasoning=f"Human reviewer submitted decision: '{decision.upper()}'. Reasoning: {invoice_state.human_reasoning}",
         confidence=1.0,
-        output_summary={"decision": decision, "reasoning": reasoning}
+        output_summary={"decision": decision, "reasoning": invoice_state.human_reasoning}
     )
     invoice_state.decision_trail.append(step)
 
@@ -293,7 +294,7 @@ async def human_gate_node(ctx: Context, node_input: Any) -> AsyncGenerator[Any, 
 
 @node
 def poster_node(ctx: Context, node_input: Any) -> Event:
-    """Poster node: executes NetSuite GL posting for approved entries."""
+    """Poster node: executes NetSuite ERP GL posting for approved entries."""
     state_dict = node_input if isinstance(node_input, dict) and "invoice_id" in node_input else ctx.state.get("invoice_state", {})
     invoice_state = InvoiceState(**state_dict)
 
@@ -318,8 +319,8 @@ def poster_node(ctx: Context, node_input: Any) -> Event:
     step = DecisionStep(
         step_index=len(invoice_state.decision_trail) + 1,
         node_name="Poster",
-        action="Write Posted GL Entry via NetSuite MCP Backend",
-        reasoning=f"Successfully posted GL entry to NetSuite sandbox with Transaction ID '{ns_id}'.",
+        action="Write Posted GL Entry via NetSuite ERP Sandbox",
+        reasoning=f"Successfully posted GL entry to NetSuite ERP sandbox with Transaction ID '{ns_id}'.",
         confidence=1.0,
         output_summary={
             "netsuite_transaction_id": ns_id,
