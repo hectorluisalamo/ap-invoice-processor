@@ -68,7 +68,7 @@ AP Copilot is structured as a linear 6-node ADK 2.0 `Workflow` graph threading s
 ### Setup Commands
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/ap-invoice-processer.git
+git clone https://github.com/hectorluisalamo/ap-invoice-processor.git
 cd ap-invoice-processer
 
 # Create and activate virtual environment
