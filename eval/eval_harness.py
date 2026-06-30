@@ -115,12 +115,25 @@ async def run_evaluation():
     roi_savings_pct = ((manual_cost_per_inv - avg_agent_cost_per_inv) / manual_cost_per_inv) * 100.0
 
     print("\nBENCHMARK RESULTS BREAKDOWN:")
-    print("-" * 75)
-    print(f"{'Invoice ID':<15} {'Scenario Type':<24} {'Expected':<14} {'Actual':<14} {'Status':<8}")
-    print("-" * 75)
+    print(" Status = PASS only when BOTH route and GL are correct; each FAIL notes the failing dimension.")
+    print("-" * 92)
+    print(f"{'Invoice ID':<14} {'Scenario Type':<20} {'Route exp→act':<28} {'GL exp→act':<14} {'Status':<8}")
+    print("-" * 92)
     for r in results:
-        status_str = "✅ PASS" if r["route_correct"] and r["gl_correct"] else "❌ FAIL"
-        print(f"{r['id']:<15} {r['type']:<24} {r['expected_route']:<14} {r['actual_route']:<14} {status_str:<8}")
+        route_cell = f"{r['expected_route']}→{r['actual_route']}"
+        gl_cell = f"{r['expected_gl']}→{r['actual_gl']}"
+        if r["route_correct"] and r["gl_correct"]:
+            status_str = "✅ PASS"
+        else:
+            dims = []
+            if not r["route_correct"]: dims.append("route")
+            if not r["gl_correct"]: dims.append("GL")
+            status_str = "❌ FAIL (" + ", ".join(dims) + ")"
+        print(f"{r['id']:<14} {r['type']:<20} {route_cell:<28} {gl_cell:<14} {status_str}")
+    print("-" * 92)
+    print(" Note: low_confidence invoices mask the vendor name, so the agent correctly routes to a human")
+    print(" AND falls back to the default GL (6100). Those rows route right but score as a GL miss against")
+    print(" the hidden true account — expected, conservative behavior, not an agent error.")
 
     if errored:
         print("\n" + "!" * 75)
