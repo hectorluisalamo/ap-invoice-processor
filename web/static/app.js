@@ -1,5 +1,6 @@
 let activeSessionId = null;
 let pollInterval = null;
+let lastRenderedTrailLen = -1; // only re-render/auto-scroll the audit trail when a step is actually added
 let currentInvoice = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -73,6 +74,7 @@ async function startWorkflowRun(invoiceId) {
         const data = await res.json();
         activeSessionId = data.session_id;
 
+        lastRenderedTrailLen = -1; // reset so the new run's trail renders from scratch
         if (pollInterval) clearInterval(pollInterval);
         pollInterval = setInterval(pollSessionState, 800);
     } catch (e) {
@@ -177,6 +179,11 @@ function renderAuditTrail(trail) {
     const container = document.getElementById('audit-trail-container');
     document.getElementById('trail-count').innerText = `${trail.length} Steps`;
 
+    // Only re-render when the step count changes, so the 800ms poll doesn't interrupt manual scrolling.
+    if (trail.length === lastRenderedTrailLen) return;
+    const trailGrew = trail.length > lastRenderedTrailLen;
+    lastRenderedTrailLen = trail.length;
+
     if (trail.length === 0) {
         container.innerHTML = '<div class="empty-trail">No active workflow trail.</div>';
         return;
@@ -196,7 +203,8 @@ function renderAuditTrail(trail) {
         `;
         container.appendChild(div);
     });
-    container.scrollTop = container.scrollHeight;
+    // Follow to the newest step only when a step was actually added — never fight a manual scroll.
+    if (trailGrew) container.scrollTop = container.scrollHeight;
 }
 
 function renderLiveDetails(state) {
