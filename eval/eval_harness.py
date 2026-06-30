@@ -8,14 +8,7 @@ from google.adk.runners import InMemoryRunner
 from google.genai import types
 
 from ap_invoice_processor.graph import root_agent
-
-HUMAN_GATE_INTERRUPT_ID = "human_triage"
-
-
-def _is_paused_at_gate(event) -> bool:
-    """The human gate pause surfaces as a normal Event whose long_running_tool_ids
-    contains the interrupt id - the runner never yields a RequestInput here."""
-    return bool(event.long_running_tool_ids and HUMAN_GATE_INTERRUPT_ID in event.long_running_tool_ids)
+from ap_invoice_processor.hitl import is_paused_at_gate
 
 async def run_evaluation():
     print("=" * 75)
@@ -36,6 +29,7 @@ async def run_evaluation():
     runner = InMemoryRunner(app=app_instance)
 
     results = []
+    errored = []
     total_invoices = len(invoices)
     correct_gl_count = 0
     correct_route_count = 0
@@ -55,14 +49,28 @@ async def run_evaluation():
             # Consume the stream fully (don't break) - the runner suspends at the
             # gate on its own; breaking mid-stream cancels the workflow noisily.
             async for event in runner.run_async(user_id="eval_user", session_id=session.id, new_message=new_msg):
-                if _is_paused_at_gate(event):
+                if is_paused_at_gate(event):
                     paused_at_gate = True
 
                 if event.output and isinstance(event.output, dict) and "invoice_id" in event.output:
                     final_state = event.output
                     route_signal = event.output.get("route_signal")
         except Exception as e:
-            pass
+            # Never silently swallow a run failure: a crashed invoice must surface as
+            # an explicit error (and count against the metrics), not masquerade as a
+            # clean auto_post. Record it and score it as a miss.
+            errored.append({"id": inv["id"], "error": repr(e)})
+            results.append({
+                "id": inv["id"],
+                "type": inv["test_case_type"],
+                "expected_route": inv["ground_truth"]["expected_route"],
+                "actual_route": "ERROR",
+                "route_correct": False,
+                "expected_gl": inv["ground_truth"].get("expected_gl"),
+                "actual_gl": None,
+                "gl_correct": False,
+            })
+            continue
 
         gt = inv["ground_truth"]
         expected_route = gt["expected_route"]
@@ -113,6 +121,13 @@ async def run_evaluation():
     for r in results:
         status_str = "✅ PASS" if r["route_correct"] and r["gl_correct"] else "❌ FAIL"
         print(f"{r['id']:<15} {r['type']:<24} {r['expected_route']:<14} {r['actual_route']:<14} {status_str:<8}")
+
+    if errored:
+        print("\n" + "!" * 75)
+        print(f" ⚠️  {len(errored)} INVOICE(S) ERRORED DURING EVALUATION (scored as misses):")
+        for e in errored:
+            print(f"    - {e['id']}: {e['error']}")
+        print("!" * 75)
 
     print("\n" + "=" * 75)
     print(" 📈 FINAL PERFORMANCE METRICS & ROI READOUT")

@@ -51,7 +51,7 @@ AP Copilot is structured as a branched 6-node ADK 2.3.0 `Workflow` graph—linea
 | **Intake** | Ingests raw invoice payloads (JSON/text/scans) and initializes normalized shared state. | `raw invoice` → `normalized state` |
 | **Extractor** | Reads the structured fields (vendor, total amount, date, line items, PO#) from the synthetic invoice payload and surfaces a per-field confidence score for each. | `invoice doc` → `structured fields + confidence` |
 | **GL-Coder** | Maps line items to GL accounts and department codes using rules loaded from portable `SKILL.md`. | `line items` → `GL-coded entries` |
-| **Policy-Validator** | Evaluates compliance: duplicate checks, PO database verification, unknown-vendor detection, low confidence (<0.85), and the **$5,000 auto-post ceiling**. | `coded entry` → `auto_post` vs `human_review` |
+| **Policy-Validator** | Evaluates compliance: duplicate checks, PO database verification, unknown-vendor detection, low confidence (<0.85), and the **$5,000 auto-post ceiling** (≥ $5,000 routes to a human). | `coded entry` → `auto_post` vs `human_review` |
 | **Human Gate** | Intercepts flagged entries via ADK `RequestInput` for interactive human triage (Approve/Reject). | `flagged entry` → `approved / rejected` |
 | **Poster** | Posts approved entries through a local **NetSuite MCP server** (`mcp_server/`)—a mock NetSuite ERP exposed over a real MCP interface—and records the returned transaction ID (`NS-POST-XXXXX`). | `approved entry` → `posted GL entry` |
 
@@ -59,13 +59,13 @@ AP Copilot is structured as a branched 6-node ADK 2.3.0 `Workflow` graph—linea
 
 ## 🎯 Competition Concepts Demonstrated (5 of 6 Named Concepts)
 
-Four concepts are implemented directly in code, plus Google Antigravity in the build/video—5 of the 6 named concepts (only Deployability is not claimed).
+Four are implemented directly in code — the ADK graph, the MCP server, the Agent Skill, and the Security/HITL rails — plus Google Antigravity as the build surface: **5 of the 6** named concepts. Only Deployability is not claimed.
 
 1. **ADK 2.3.0 Workflow Multi-Agent Graph:** Built natively using `google.adk.workflow.Workflow`, `@node` decorators, and explicit conditional routing (`Edge(from_node=..., to_node=..., route=...)`).
 2. **MCP Server:** A local **NetSuite MCP server** and client (`mcp_server/`)—the Poster node posts approved entries through the real MCP interface to a mock NetSuite ERP.
 3. **Agent Skill (`SKILL.md`):** Portable skill definition in `skills/ap_invoice_skill/SKILL.md` encapsulating GL mapping tables, keyword fallbacks, and policy thresholds, parsed dynamically at runtime.
 4. **Security & Human-in-the-Loop Safety Rails:** Hard **$5,000 auto-post dollar ceiling**, duplicate invoice prevention, and interactive `RequestInput` human gate.
-5. **Google Antigravity:** Used to build the project and demonstrated in the video walkthrough.
+5. **Google Antigravity:** Used as the primary build surface; the round-by-round build artifacts are preserved under [`docs/`](docs/AUDIT.md).
 
 ---
 
@@ -164,7 +164,7 @@ ap-invoice-processor/
 
 ## ⚖️ Development, Validation & License
 
-* **Development & Validation:** Built with Google Antigravity, then independently audited **twice** with Claude Code via a 5-agent review (confidentiality, rules-compliance, security, writing, and code/architecture).
-* **Commercial Tools Used:** Google Antigravity, Google Agent Development Kit (ADK 2.3.0), Claude Code, and the Gemini API.
+* **Development & Validation:** Built with Google Antigravity, then independently audited and remediated with Claude Code across multiple fresh-context review rounds (confidentiality, rules-compliance, security, code/architecture, and evaluation integrity). The full round-by-round trail is in [`docs/AUDIT.md`](docs/AUDIT.md).
+* **Commercial Tools Used:** Google Antigravity (Gemini-powered build surface), Google Agent Development Kit (ADK 2.3.0), and Claude Code. The agent itself makes no live LLM/API calls — see the keyless note above.
 * **Data:** 100% synthetic—no real vendor, invoice, or financial data is used.
 * **License:** Code is licensed under the [Apache 2.0 License](LICENSE). Per competition terms, the submission content is offered under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).

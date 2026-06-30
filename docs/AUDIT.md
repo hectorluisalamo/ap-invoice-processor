@@ -1,6 +1,6 @@
 # Development & Audit Trail
 
-AP Copilot was built and hardened across **four rounds** by two agentic tools — built fast with Google Antigravity, audited hard with Claude Code, then expanded again. This file is the honest record of what happened in each round, with the build artifacts preserved so the trail is verifiable rather than just asserted.
+AP Copilot was built and hardened across **five rounds** by two agentic tools — built fast with Google Antigravity, audited hard with Claude Code, expanded, then independently re-audited and remediated. This file is the honest record of what happened in each round, with the build artifacts preserved so the trail is verifiable rather than just asserted.
 
 The two pre-audit Antigravity rounds — whose specific technical claims were superseded by the independent audit that followed — are kept under [`historical/`](historical), preserved exactly as the tool produced them. The rounds that reflect the shipped system (the audit and the later feature expansion) sit at the top level of `docs/`.
 
@@ -72,6 +72,25 @@ Folding this round into the trail also included a documentation-accuracy pass (C
 - **Doc-accuracy fixes** — corrected stale claims a fresh review surfaced: the graph described as "linear" (it branches at the Policy-Validator), an Extractor described as live vision/LLM parsing (it reads pre-structured synthetic fields), the undocumented custom-invoice flow, and the undocumented unknown-vendor rail. The removed claim that a Gemini API key is required was also part of this pass — the demo is keyless.
 
 Verification: the eval harness and unit/integration suite continue to pass unchanged (the feature changes are front-end plus one additive endpoint; the documentation pass touched no agent logic), and the three smoke scenarios — clean auto-post, gated-approve, gated-reject — were re-run end to end on both the CLI and the web surfaces.
+
+## Round 5 — Independent re-audit, grading & remediation (Claude Code)
+
+With the build feature-complete, a third, fully independent Claude Code pass re-audited the repo from a clean context — not to confirm it, but to try to break it. It ran as a fan-out of focused adversarial agents (code & evaluation integrity, documentation-vs-live-code accuracy, audit-trail honesty, and public-repo security), each re-deriving its conclusions from the live code rather than trusting any prior round's claims, alongside a separate panel that graded the submission against the official competition rubric to prioritize what was worth fixing before submission.
+
+### What round 5 confirmed
+
+Re-running the system from a clean clone reproduced the headline results exactly — `pytest` → 6 passed; `eval/eval_harness.py` → GL 82%, route 94%, auto-post 44%, $14.50 → $1.75, 87.9%. The audit found the eval to be honest (ROI is computed from the live auto-post rate, not hardcoded; the agent is scored *down* for real misses), the tests meaningful (the human-gate resume and the MCP round-trip are exercised end-to-end), the trail accurate (the [`historical/`](historical) reorg is a verified pure `git mv`; the reconstructed round-3 pair is labeled and does not overclaim), and the repo safe to publish (no secrets or personal filesystem paths in the tree or git history; dependencies real and pinned).
+
+### What round 5 fixed
+
+- **Dashboard Extractor tile relabeled** — the center pipeline node still read "Vision Parse" with an eye icon, contradicting round 4's own correction of that exact overclaim elsewhere. It now reads "Field Extract," matching what the node actually does: it reads pre-structured fields and scores confidence, with no vision/LLM call.
+- **Synthetic-data generator hardened (two real bugs).** (1) Line items now sum exactly to the invoice total; previously each item was re-divided and the total was overwritten with the smaller sum, which could drop a `high_dollar_ceiling` invoice below the $5k ceiling and mislabel it. (2) The generator's vendor list is now derived from the canonical [`vendor_master.json`](../data/vendor_master.json) instead of a parallel hand-kept copy that had drifted (e.g. an "Apple Store" alias the master didn't list), which had produced spurious `unknown_vendor` routes. A fixed seed makes regeneration reproducible. Both bugs only ever made the agent's measured accuracy look *worse* than it is, so the committed dataset is intentionally left unchanged — the published 94% route accuracy understates rather than overstates the system.
+- **Evaluation harness no longer swallows failures** — a bare `except: pass` that could let a crashed invoice masquerade as a clean auto-post was replaced with explicit error surfacing (crashed invoices are reported and scored as misses).
+- **Human-in-the-loop helpers de-duplicated** — the gate-pause / resume-message / poster-check helpers, previously copy-pasted across the CLI, web server, eval, and tests, were consolidated into one [`ap_invoice_processor/hitl.py`](../ap_invoice_processor/hitl.py).
+
+### Verification
+
+`pytest` → 6 passed and `eval/eval_harness.py` → GL 82% / route 94% / auto-post 44% / $14.50 → $1.75 / 87.9% both reproduce unchanged after the remediation (the dataset was deliberately not re-baselined). A summary of the round-5 findings is preserved in [`round5_independent_review/`](round5_independent_review).
 
 ## Why this trail exists
 

@@ -14,38 +14,12 @@ from google.adk.runners import InMemoryRunner
 from google.genai import types
 
 from ap_invoice_processor.graph import root_agent
-
-HUMAN_GATE_INTERRUPT_ID = "human_triage"
-
-
-def _is_paused_at_gate(event) -> bool:
-    """The human gate pause surfaces as a normal Event whose long_running_tool_ids
-    contains the interrupt id - the runner never yields a RequestInput here."""
-    return bool(event.long_running_tool_ids and HUMAN_GATE_INTERRUPT_ID in event.long_running_tool_ids)
-
-
-def _poster_ran(state: dict) -> bool:
-    """True once the Poster node has appended a step to the decision trail."""
-    if not isinstance(state, dict):
-        return False
-    return any(step.get("node_name") == "Poster" for step in state.get("decision_trail", []))
-
-
-def _build_resume_message(decision: str, reasoning: str) -> types.Content:
-    """Resume the interrupted human_gate_node by sending a FunctionResponse carrying
-    the decision. The runner maps it to ctx.resume_inputs['human_triage']."""
-    return types.Content(
-        role="user",
-        parts=[
-            types.Part(
-                function_response=types.FunctionResponse(
-                    id=HUMAN_GATE_INTERRUPT_ID,
-                    name="adk_request_input",
-                    response={"decision": decision, "reasoning": reasoning},
-                )
-            )
-        ],
-    )
+from ap_invoice_processor.hitl import (
+    HUMAN_GATE_INTERRUPT_ID,
+    is_paused_at_gate,
+    build_resume_message,
+    poster_ran,
+)
 
 app_instance = App(name="ap_copilot_app", root_agent=root_agent)
 runner = InMemoryRunner(app=app_instance)
@@ -206,7 +180,7 @@ async def _execute_workflow(session_id: str, adk_session_id: str, new_msg: types
             session_id=adk_session_id,
             new_message=new_msg,
         ):
-            if _is_paused_at_gate(event):
+            if is_paused_at_gate(event):
                 paused = True
 
             if event.output and isinstance(event.output, dict) and "invoice_id" in event.output:
@@ -225,7 +199,7 @@ async def _execute_workflow(session_id: str, adk_session_id: str, new_msg: types
 
         # The stream ended without pausing: the Poster ran (posted or aborted).
         final_state = sess_info.get("invoice_state") or {}
-        if isinstance(final_state, dict) and final_state.get("human_decision") == "rejected" and _poster_ran(final_state):
+        if isinstance(final_state, dict) and final_state.get("human_decision") == "rejected" and poster_ran(final_state):
             sess_info["status"] = "aborted"
         else:
             sess_info["status"] = "completed"
@@ -250,6 +224,6 @@ async def submit_triage(session_id: str, req: HumanTriageRequest):
     sess_info["status"] = "resuming"
     sess_info["is_paused_at_gate"] = False
 
-    resume_msg = _build_resume_message(decision, reasoning)
+    resume_msg = build_resume_message(decision, reasoning)
     asyncio.create_task(_execute_workflow(session_id, sess_info["adk_session_id"], new_msg=resume_msg))
     return {"status": "resumed", "decision": decision}
