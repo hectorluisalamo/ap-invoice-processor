@@ -16,7 +16,7 @@
 
 Manual Accounts Payable (AP) processing is an enterprise bottleneck costing organizations **$14.50+ per invoice** in labor, slow processing cycles, and risk of duplicate payments. 
 
-**AP Copilot** is an autonomous accounts-payable agent built on **Google Agent Development Kit (ADK 2.0)** that automates invoice extraction, GL account coding, and ERP posting through a local **NetSuite MCP server**—with a **hard Human-in-the-Loop safety gate** on high-dollar or risky invoices. (All data is 100% synthetic; the NetSuite target is a mock ERP behind a real MCP interface.)
+**AP Copilot** is an autonomous accounts-payable agent built on **Google Agent Development Kit (ADK 2.x, pinned to 2.3.0)** that automates invoice extraction, GL account coding, and ERP posting through a local **NetSuite MCP server**—with a **hard Human-in-the-Loop safety gate** on high-dollar or risky invoices. (All data is 100% synthetic; the NetSuite target is a mock ERP behind a real MCP interface.)
 
 ### 📈 Benchmark Performance & ROI Highlights (N=50 Synthetic Invoices)
 * **Autonomous Auto-Post Rate:** **44.0%** of routine invoices posted instantly with zero human intervention.
@@ -29,7 +29,7 @@ Manual Accounts Payable (AP) processing is an enterprise bottleneck costing orga
 
 ## 🏗️ System Architecture
 
-AP Copilot is structured as a linear 6-node ADK 2.0 `Workflow` graph threading shared state (`InvoiceState`) and decision audit logs across every execution step:
+AP Copilot is structured as a branched 6-node ADK 2.0 `Workflow` graph—linear through extraction and validation, then forking at the Policy-Validator into an `auto_post` path or a `human_review` path—threading shared state (`InvoiceState`) and decision audit logs across every execution step:
 
 ```
 ┌──────────┐     ┌───────────┐     ┌──────────┐     ┌──────────────────┐
@@ -49,9 +49,9 @@ AP Copilot is structured as a linear 6-node ADK 2.0 `Workflow` graph threading s
 | Node | Responsibilities | Shared State Transition |
 |---|---|---|
 | **Intake** | Ingests raw invoice payloads (JSON/text/scans) and initializes normalized shared state. | `raw invoice` → `normalized state` |
-| **Extractor** | Structured vision/LLM parsing of vendor, total amount, date, line items, PO#, and per-field confidence. | `invoice doc` → `structured fields + confidence` |
+| **Extractor** | Reads the structured fields (vendor, total amount, date, line items, PO#) from the synthetic invoice payload and surfaces a per-field confidence score for each. | `invoice doc` → `structured fields + confidence` |
 | **GL-Coder** | Maps line items to GL accounts and department codes using rules loaded from portable `SKILL.md`. | `line items` → `GL-coded entries` |
-| **Policy-Validator** | Evaluates compliance: duplicate checks, PO database verification, low confidence (<0.85), and **$5,000 auto-post ceiling**. | `coded entry` → `auto_post` vs `human_review` |
+| **Policy-Validator** | Evaluates compliance: duplicate checks, PO database verification, unknown-vendor detection, low confidence (<0.85), and the **$5,000 auto-post ceiling**. | `coded entry` → `auto_post` vs `human_review` |
 | **Human Gate** | Intercepts flagged entries via ADK `RequestInput` for interactive human triage (Approve/Reject). | `flagged entry` → `approved / rejected` |
 | **Poster** | Posts approved entries through a local **NetSuite MCP server** (`mcp_server/`)—a mock NetSuite ERP exposed over a real MCP interface—and records the returned transaction ID (`NS-POST-XXXXX`). | `approved entry` → `posted GL entry` |
 
@@ -103,6 +103,8 @@ PYTHONPATH=. uvicorn web.server:web_app --reload --port 8000
 ```
 👉 Open your browser to **`http://localhost:8000`**
 
+Run any of the bundled synthetic scenarios, or use the **Test Your Own Invoice** panel to submit a custom vendor/amount/PO/line-item and watch it run through the same graph (`POST /api/run-custom`). Inputs above the $5,000 ceiling, with an unknown vendor, or with a bad/missing PO route to the Human Gate—exactly like the pre-baked cases.
+
 ### 2. Run the Interactive CLI Demo
 Run sample invoice scenarios directly in your console:
 ```bash
@@ -143,6 +145,9 @@ ap-invoice-processor/
 ├── data/                    # Master tables & synthetic dataset generator
 │   ├── gl_chart_of_accounts.json
 │   ├── vendor_master.json
+│   ├── po_database.json
+│   ├── historical_invoices.json
+│   ├── synthetic_invoices/      # Generated invoice set the runners load (invoices.json)
 │   └── generate_synthetic_data.py
 ├── web/                     # FastAPI dashboard backend & web UI
 │   ├── server.py            # FastAPI server with session & triage endpoints

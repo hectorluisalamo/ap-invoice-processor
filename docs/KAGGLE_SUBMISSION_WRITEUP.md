@@ -1,7 +1,7 @@
 # AP Copilot: Autonomous Accounts Payable Processing with Human Gate Safety Rails
 
 **Track:** Agents for Business  
-**Submission Title:** AP Copilot — Linear ADK 2.0 Agent Graph for Autonomous Invoice Processing  
+**Submission Title:** AP Copilot — Branched ADK 2.0 Agent Graph for Autonomous Invoice Processing  
 **Author:** Hector Luis Alamo  
 **Frameworks Used:** Google Agent Development Kit (ADK 2.0), Google Antigravity, FastAPI, Pydantic  
 
@@ -19,7 +19,7 @@ OCR cleaned up the data-entry half of the job, but it didn't add judgment. A sca
 
 ## 2. System Architecture
 
-AP Copilot is a linear six-node graph built on the **ADK 2.0 Workflow API**. Every node reads and writes one validated, immutable shared state (`InvoiceState`) and appends to a decision trail (`DecisionStep`), so I can replay exactly why the agent did what it did.
+AP Copilot is a branched six-node graph built on the **ADK 2.0 Workflow API** — linear through extraction and validation, then forking at the Policy-Validator into an `auto_post` or `human_review` path. Every node reads and writes one validated, immutable shared state (`InvoiceState`) and appends to a decision trail (`DecisionStep`), so I can replay exactly why the agent did what it did.
 
 ```text
 ┌──────────┐     ┌───────────┐     ┌──────────┐     ┌──────────────────┐
@@ -37,12 +37,13 @@ AP Copilot is a linear six-node graph built on the **ADK 2.0 Workflow API**. Eve
 ### What each node does:
 
 1. **Intake (`intake_node`):** Takes raw invoice payloads — JSON, text, visual scans — and normalizes them into an initialized `InvoiceState`.
-2. **Extractor (`extractor_node`):** Parses out vendor, totals, dates, line items, and PO numbers, scoring each field's confidence from 0.0 to 1.0.
+2. **Extractor (`extractor_node`):** Reads the structured fields — vendor, totals, dates, line items, PO numbers — from the synthetic invoice payload and surfaces a per-field confidence score (0.0 to 1.0) for each. (In this synthetic demo the fields and confidences arrive pre-structured; the node is the seam where a production vision/LLM extractor would plug in.)
 3. **GL-Coder (`gl_coder_node`):** Reads an Agent Skill (`SKILL.md`) and maps each line item to a four-digit GL account (6000 Cloud Services, 6100 Office Supplies, and so on) plus a department tag, working from vendor patterns and item descriptions.
 4. **Policy-Validator (`policy_validator_node`):** Enforces the hard rules and sets the route:
    - **$5,000 auto-post ceiling:** anything at or above $5,000 goes to a human.
    - **Duplicate detection:** checks invoice numbers against ERP history.
-   - **PO matching:** validates against the procurement master.
+   - **PO matching:** validates against the procurement master (any PO supplied is checked, and PO-required vendors must supply one).
+   - **Unknown-vendor detection:** a vendor that can't be matched to the vendor master is treated as high-risk and routed to a human.
    - **Confidence threshold:** flags any extraction below 0.85.
    - Then it routes to `auto_post` or `human_review`.
 5. **Human Gate (`human_gate_node`):** A suspend/resume node. When a flag fires, execution pauses on ADK `RequestInput` and waits for a reviewer to approve or reject. Nothing slips past it.
@@ -99,7 +100,7 @@ The harness computes the blend straight from the auto-post and triage rates abov
 
 Two ways to drive it:
 
-1. **Web dashboard (FastAPI + HTML/CSS/JS):** A dark-mode app at `http://localhost:8000` with live node-pipeline animation, a Human Gate triage desk, and a step-by-step decision audit log you can open up and read.
+1. **Web dashboard (FastAPI + HTML/CSS/JS):** A dark-mode app at `http://localhost:8000` with live node-pipeline animation, a Human Gate triage desk, and a step-by-step decision audit log you can open up and read. It runs the bundled synthetic scenarios and also has a **Test Your Own Invoice** panel — type a vendor, amount, PO, and line item, and watch your invoice route through the same graph (auto-post or Human Gate) in real time.
 2. **Terminal CLI (`cli_demo.py`):** A console runner that steps through invoice scenarios and simulates the approval prompt for people who live in a shell.
 
 ---

@@ -15,7 +15,9 @@ This skill defines company accounting policies, vendor-to-GL account mappings, a
 - **Minimum Confidence Threshold**: `0.85`
   - If any critical extracted field (vendor, invoice number, date, total amount) has a confidence score below `0.85`, route to Human Gate.
 - **PO Enforcement**:
-  - For vendors requiring a PO (`po_required = true`), the PO number must exist in the PO database. Mismatched or missing POs route to Human Gate.
+  - For vendors requiring a PO (`po_required = true`), the PO number must exist in the PO database. Additionally, any PO number supplied on an invoice — even for a vendor that does not require one — is validated against the database. Mismatched or missing POs route to Human Gate.
+- **Unknown Vendor**:
+  - If the invoice vendor cannot be matched to an entry in the vendor master (by name or alias), route to the Human Gate. An unrecognized payee is treated as high-risk and never auto-posted.
 - **Duplicate Prevention**:
   - Invoices with an invoice number matching any historically posted entry route to Human Gate as suspected duplicates.
 
