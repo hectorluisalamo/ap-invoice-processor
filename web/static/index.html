@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css?v=2.1">
 </head>
 <body>
     <div class="app-container">
@@ -101,31 +101,38 @@
                         <div class="node-title">Intake</div>
                         <div class="node-sub">Raw -> State</div>
                     </div>
-                    <div class="pipeline-connector"></div>
+                    <div class="pipeline-connector" id="conn-1"></div>
                     <div class="node-step" id="node-Extractor">
                         <div class="node-icon">👁️</div>
                         <div class="node-title">Extractor</div>
                         <div class="node-sub">Vision Parse</div>
                     </div>
-                    <div class="pipeline-connector"></div>
+                    <div class="pipeline-connector" id="conn-2"></div>
                     <div class="node-step" id="node-GL-Coder">
                         <div class="node-icon">🏷️</div>
                         <div class="node-title">GL-Coder</div>
                         <div class="node-sub">SKILL.md Rules</div>
                     </div>
-                    <div class="pipeline-connector"></div>
+                    <div class="pipeline-connector" id="conn-3"></div>
                     <div class="node-step" id="node-Policy-Validator">
                         <div class="node-icon">🛡️</div>
                         <div class="node-title">Validator</div>
                         <div class="node-sub">Compliance</div>
                     </div>
-                    <div class="pipeline-connector"></div>
+                    
+                    <!-- Human Gate Branch (Row 2) -->
+                    <div class="branch-connector branch-left" id="conn-branch-left"></div>
                     <div class="node-step warning-gate" id="node-Human Gate">
                         <div class="node-icon">🧑</div>
                         <div class="node-title">Human Gate</div>
                         <div class="node-sub">Safety Rail</div>
                     </div>
-                    <div class="pipeline-connector"></div>
+                    <div class="branch-connector branch-right" id="conn-branch-right"></div>
+
+                    <!-- Bypass Branch (Row 1) -->
+                    <div class="pipeline-connector bypass-connector" id="conn-bypass"></div>
+                    
+                    <!-- Final Node (Row 1) -->
                     <div class="node-step success-node" id="node-Poster">
                         <div class="node-icon">🏦</div>
                         <div class="node-title">Poster</div>
@@ -177,6 +184,6 @@
         </main>
     </div>
 
-    <script src="/static/app.js"></script>
+    <script src="/static/app.js?v=2.1"></script>
 </body>
 </html>

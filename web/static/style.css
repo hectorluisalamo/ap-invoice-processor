@@ -312,17 +312,33 @@ body {
     padding: 8px 10px;
 }
 
-/* Pipeline Visualizer */
+/* Pipeline Visualizer (Branched Grid Layout) */
 .pipeline-visualizer {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto minmax(12px, 1fr) auto minmax(12px, 1fr) auto minmax(12px, 1fr) auto minmax(24px, 1.2fr) auto minmax(24px, 1.2fr) auto;
+    grid-template-rows: auto auto;
     align-items: center;
-    justify-content: space-between;
     background: rgba(15, 23, 42, 0.6);
     border: 1px solid var(--panel-border);
-    padding: 20px 14px;
+    padding: 24px 20px;
     border-radius: var(--radius-md);
     overflow-x: auto;
+    gap: 12px 0;
 }
+
+#node-Intake { grid-row: 1; grid-column: 1; }
+#conn-1 { grid-row: 1; grid-column: 2; }
+#node-Extractor { grid-row: 1; grid-column: 3; }
+#conn-2 { grid-row: 1; grid-column: 4; }
+#node-GL-Coder { grid-row: 1; grid-column: 5; }
+#conn-3 { grid-row: 1; grid-column: 6; }
+#node-Policy-Validator { grid-row: 1; grid-column: 7; }
+#conn-bypass { grid-row: 1; grid-column: 8 / 11; }
+#node-Poster { grid-row: 1; grid-column: 11; }
+
+#conn-branch-left { grid-row: 1 / 3; grid-column: 8; }
+[id="node-Human Gate"] { grid-row: 2; grid-column: 9; }
+#conn-branch-right { grid-row: 1 / 3; grid-column: 10; }
 
 .node-step {
     display: flex;
@@ -347,6 +363,11 @@ body {
 .node-step.completed .node-icon {
     border-color: var(--success-green);
     background: rgba(16, 185, 129, 0.2);
+    opacity: 1;
+}
+
+.node-step.completed {
+    opacity: 1;
 }
 
 .node-icon {
@@ -359,11 +380,104 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 18px;
+    transition: all 0.3s ease;
 }
 
 .node-title { font-size: 12px; font-weight: 700; }
 .node-sub { font-size: 10px; color: var(--text-muted); }
-.pipeline-connector { flex: 1; height: 2px; background: var(--panel-border); min-width: 12px; margin: 0 4px; margin-bottom: 20px;}
+
+/* Connectors */
+.pipeline-connector {
+    height: 2px;
+    background: var(--panel-border);
+    align-self: start;
+    margin-top: 22px;
+    transition: all 0.3s ease;
+}
+
+.pipeline-connector.active {
+    background-color: var(--accent-blue) !important;
+    box-shadow: 0 0 8px var(--accent-blue);
+}
+
+.pipeline-connector.completed {
+    background-color: var(--success-green) !important;
+}
+
+/* Bypass/Auto-Post Path Connector */
+.bypass-connector {
+    position: relative;
+    height: 0;
+    border-top: 2px dashed var(--panel-border);
+    background: none !important;
+}
+
+.bypass-connector.active {
+    border-top: 2px dashed var(--accent-blue);
+    filter: drop-shadow(0 0 4px var(--accent-blue));
+}
+
+.bypass-connector.completed {
+    border-top: 2px dashed var(--success-green);
+}
+
+.bypass-connector::after {
+    content: 'Auto-Post';
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #0b0f19;
+    padding: 0 6px;
+    transition: all 0.3s ease;
+}
+
+.bypass-connector.active::after {
+    color: var(--accent-blue);
+}
+
+.bypass-connector.completed::after {
+    color: var(--success-green);
+}
+
+/* Branching/Triage Path Connectors */
+.branch-connector {
+    position: relative;
+    border: 2px solid var(--panel-border);
+    transition: all 0.3s ease;
+}
+
+.branch-connector.branch-left {
+    border-top: none;
+    border-right: none;
+    border-bottom-left-radius: 8px;
+    margin-top: 22px;
+    height: 94px;
+    align-self: start;
+}
+
+.branch-connector.branch-right {
+    border-top: none;
+    border-left: none;
+    border-bottom-right-radius: 8px;
+    margin-top: 22px;
+    height: 94px;
+    align-self: start;
+}
+
+.branch-connector.active {
+    border-color: var(--accent-blue) !important;
+    filter: drop-shadow(0 0 4px var(--accent-blue));
+}
+
+.branch-connector.completed {
+    border-color: var(--success-green) !important;
+}
 
 /* Triage Desk */
 .triage-desk-card {

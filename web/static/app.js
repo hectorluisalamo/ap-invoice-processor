@@ -3,6 +3,14 @@ let pollInterval = null;
 let lastRenderedTrailLen = -1; // only re-render/auto-scroll the audit trail when a step is actually added
 let currentInvoice = null;
 
+// Playback animation state
+let currentTrail = [];
+let currentStatus = 'idle';
+let currentPausedAtGate = false;
+let currentInvoiceState = null;
+let playbackIndex = 0;
+let playbackTimeout = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     fetchInvoices();
 
@@ -66,6 +74,18 @@ async function startWorkflowRun(invoiceId) {
     resetWorkflowUI();
     updateStatusBadge('running', 'Processing...');
 
+    // Reset playback animation states
+    currentTrail = [];
+    currentStatus = 'running';
+    currentPausedAtGate = false;
+    currentInvoiceState = null;
+    playbackIndex = 0;
+    lastRenderedTrailLen = -1;
+    if (playbackTimeout) {
+        clearTimeout(playbackTimeout);
+        playbackTimeout = null;
+    }
+
     try {
         const res = await fetch('/api/run', {
             method: 'POST',
@@ -75,9 +95,11 @@ async function startWorkflowRun(invoiceId) {
         const data = await res.json();
         activeSessionId = data.session_id;
 
-        lastRenderedTrailLen = -1; // reset so the new run's trail renders from scratch
         if (pollInterval) clearInterval(pollInterval);
         pollInterval = setInterval(pollSessionState, 800);
+
+        // Start playback animation loop
+        playNextStep();
     } catch (e) {
         console.error('Error starting run:', e);
         updateStatusBadge('idle', 'Error');
@@ -106,6 +128,18 @@ async function startCustomWorkflowRun() {
     resetWorkflowUI();
     updateStatusBadge('running', 'Processing...');
 
+    // Reset playback animation states
+    currentTrail = [];
+    currentStatus = 'running';
+    currentPausedAtGate = false;
+    currentInvoiceState = null;
+    playbackIndex = 0;
+    lastRenderedTrailLen = -1;
+    if (playbackTimeout) {
+        clearTimeout(playbackTimeout);
+        playbackTimeout = null;
+    }
+
     try {
         const res = await fetch('/api/run-custom', {
             method: 'POST',
@@ -120,9 +154,11 @@ async function startCustomWorkflowRun() {
         const data = await res.json();
         activeSessionId = data.session_id;
 
-        lastRenderedTrailLen = -1; // reset so the new run's trail renders from scratch
         if (pollInterval) clearInterval(pollInterval);
         pollInterval = setInterval(pollSessionState, 800);
+
+        // Start playback animation loop
+        playNextStep();
     } catch (e) {
         console.error('Error starting custom run:', e);
         updateStatusBadge('idle', 'Error');
@@ -134,45 +170,172 @@ async function pollSessionState() {
 
     try {
         const res = await fetch(`/api/sessions/${activeSessionId}`);
+        if (!res.ok) {
+            console.warn(`Stopping poll because session endpoint returned status ${res.status}`);
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+            activeSessionId = null;
+            return;
+        }
         const state = await res.json();
 
-        updatePipelineVisualizer(state.current_node, state.status);
-        
+        currentStatus = state.status;
+        currentPausedAtGate = state.is_paused_at_gate;
         if (state.invoice_state) {
-            renderAuditTrail(state.invoice_state.decision_trail || []);
-            renderLiveDetails(state.invoice_state);
-        }
-
-        if (state.is_paused_at_gate) {
-            updateStatusBadge('paused', 'Paused at Human Gate');
-            showTriageDesk(state.invoice_state);
-        } else {
-            hideTriageDesk();
-            if (state.status === 'completed') {
-                updateStatusBadge('completed', 'Completed & Posted');
-                clearInterval(pollInterval);
-            }
+            currentInvoiceState = state.invoice_state;
+            currentTrail = state.invoice_state.decision_trail || [];
         }
     } catch (e) {
         console.error('Error polling session:', e);
+        if (pollInterval) {
+            clearInterval(pollInterval);
+            pollInterval = null;
+        }
+        activeSessionId = null;
     }
 }
 
-function updatePipelineVisualizer(currentNode, status) {
-    const nodes = ['Intake', 'Extractor', 'GL-Coder', 'Policy-Validator', 'Human Gate', 'Poster'];
-    const currentIndex = nodes.indexOf(currentNode);
+function playNextStep() {
+    if (!activeSessionId) return;
 
-    nodes.forEach((nodeName, index) => {
+    if (playbackIndex < currentTrail.length) {
+        const step = currentTrail[playbackIndex];
+
+        // Determine visited nodes and active node
+        const visitedNodes = new Set();
+        for (let i = 0; i < playbackIndex; i++) {
+            visitedNodes.add(currentTrail[i].node_name);
+        }
+        const activeNode = step.node_name;
+
+        // Update pipeline layout
+        updatePipelineVisualizer(visitedNodes, activeNode, false);
+
+        // Update the audit trail up to this step
+        renderAuditTrail(currentTrail.slice(0, playbackIndex + 1));
+
+        // Render intermediate live details
+        renderLiveDetailsForStep(playbackIndex);
+
+        playbackIndex++;
+        playbackTimeout = setTimeout(playNextStep, 600);
+    } else {
+        // Caught up with actual polled trail. Check if we need to wait or finish.
+        if (currentPausedAtGate) {
+            updateStatusBadge('paused', 'Paused at Human Gate');
+            showTriageDesk(currentInvoiceState);
+
+            // Highlight Human Gate as active
+            const visitedNodes = new Set(currentTrail.map(s => s.node_name));
+            visitedNodes.delete('Human Gate');
+            updatePipelineVisualizer(visitedNodes, 'Human Gate', false);
+
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+        } else if (currentStatus === 'completed' || currentStatus === 'aborted' || currentStatus === 'error') {
+            // End of workflow reached!
+            const visitedNodes = new Set(currentTrail.map(s => s.node_name));
+            updatePipelineVisualizer(visitedNodes, null, true);
+
+            // Render final trail and details
+            renderAuditTrail(currentTrail);
+            renderLiveDetails(currentInvoiceState);
+
+            if (currentStatus === 'completed') {
+                updateStatusBadge('completed', 'Completed & Posted');
+            } else if (currentStatus === 'aborted') {
+                updateStatusBadge('aborted', 'Posting Aborted');
+                const badge = document.getElementById('session-status-badge');
+                if (badge) {
+                    badge.className = 'status-badge paused'; // Red/Warning badge
+                }
+            } else {
+                updateStatusBadge('idle', 'Error');
+            }
+
+            // Clear intervals and timeouts
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+            activeSessionId = null;
+        } else {
+            // Workflow still running, wait for more steps
+            playbackTimeout = setTimeout(playNextStep, 200);
+        }
+    }
+}
+
+function updatePipelineVisualizer(visitedNodes, activeNode, isFinal) {
+    const nodes = ['Intake', 'Extractor', 'GL-Coder', 'Policy-Validator', 'Human Gate', 'Poster'];
+
+    nodes.forEach(nodeName => {
         const elem = document.getElementById(`node-${nodeName}`);
         if (!elem) return;
 
         elem.classList.remove('active', 'completed');
-        if (index < currentIndex || status === 'completed') {
-            elem.classList.add('completed');
-        } else if (index === currentIndex) {
+        if (nodeName === activeNode) {
             elem.classList.add('active');
+        } else if (visitedNodes.has(nodeName)) {
+            elem.classList.add('completed');
         }
     });
+
+    const conn1 = document.getElementById('conn-1');
+    const conn2 = document.getElementById('conn-2');
+    const conn3 = document.getElementById('conn-3');
+    const connBypass = document.getElementById('conn-bypass');
+    const connBranchLeft = document.getElementById('conn-branch-left');
+    const connBranchRight = document.getElementById('conn-branch-right');
+
+    const toggleClass = (elem, stateClass) => {
+        if (!elem) return;
+        elem.classList.remove('active', 'completed');
+        if (stateClass) elem.classList.add(stateClass);
+    };
+
+    // conn-1 (Intake -> Extractor)
+    if (visitedNodes.has('Extractor')) toggleClass(conn1, 'completed');
+    else if (activeNode === 'Extractor') toggleClass(conn1, 'active');
+    else toggleClass(conn1, null);
+
+    // conn-2 (Extractor -> GL-Coder)
+    if (visitedNodes.has('GL-Coder')) toggleClass(conn2, 'completed');
+    else if (activeNode === 'GL-Coder') toggleClass(conn2, 'active');
+    else toggleClass(conn2, null);
+
+    // conn-3 (GL-Coder -> Policy-Validator)
+    if (visitedNodes.has('Policy-Validator')) toggleClass(conn3, 'completed');
+    else if (activeNode === 'Policy-Validator') toggleClass(conn3, 'active');
+    else toggleClass(conn3, null);
+
+    // conn-bypass (Validator -> Poster bypass)
+    const isBypassPath = visitedNodes.has('Policy-Validator') && !visitedNodes.has('Human Gate') && activeNode !== 'Human Gate';
+    if (isBypassPath) {
+        if (visitedNodes.has('Poster')) toggleClass(connBypass, 'completed');
+        else if (activeNode === 'Poster') toggleClass(connBypass, 'active');
+        else toggleClass(connBypass, null);
+    } else {
+        toggleClass(connBypass, null);
+    }
+
+    // conn-branch-left (Validator -> Human Gate)
+    if (visitedNodes.has('Human Gate')) toggleClass(connBranchLeft, 'completed');
+    else if (activeNode === 'Human Gate') toggleClass(connBranchLeft, 'active');
+    else toggleClass(connBranchLeft, null);
+
+    // conn-branch-right (Human Gate -> Poster)
+    if (visitedNodes.has('Human Gate')) {
+        if (visitedNodes.has('Poster')) toggleClass(connBranchRight, 'completed');
+        else if (activeNode === 'Poster') toggleClass(connBranchRight, 'active');
+        else toggleClass(connBranchRight, null);
+    } else {
+        toggleClass(connBranchRight, null);
+    }
 }
 
 function showTriageDesk(invoiceState) {
@@ -209,13 +372,24 @@ async function submitTriage(decision) {
 
     const reasoning = document.getElementById('triage-reason').value;
     try {
+        hideTriageDesk();
+        updateStatusBadge('running', 'Resuming Workflow...');
+
+        // Re-start polling and playback since it was cleared when we paused at human gate
+        currentStatus = 'running';
+        currentPausedAtGate = false;
+
         await fetch(`/api/sessions/${activeSessionId}/triage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ decision, reasoning })
         });
-        hideTriageDesk();
-        updateStatusBadge('running', 'Resuming Workflow...');
+
+        if (pollInterval) clearInterval(pollInterval);
+        pollInterval = setInterval(pollSessionState, 800);
+
+        if (playbackTimeout) clearTimeout(playbackTimeout);
+        playNextStep();
     } catch (e) {
         console.error('Error submitting triage:', e);
     }
@@ -225,7 +399,7 @@ function renderAuditTrail(trail) {
     const container = document.getElementById('audit-trail-container');
     document.getElementById('trail-count').innerText = `${trail.length} Steps`;
 
-    // Only re-render when the step count changes, so the 800ms poll doesn't interrupt manual scrolling.
+    // Only re-render when the step count changes, so the poll doesn't interrupt manual scrolling.
     if (trail.length === lastRenderedTrailLen) return;
     const trailGrew = trail.length > lastRenderedTrailLen;
     lastRenderedTrailLen = trail.length;
@@ -254,6 +428,7 @@ function renderAuditTrail(trail) {
 }
 
 function renderLiveDetails(state) {
+    if (!state) return;
     const card = document.getElementById('invoice-details-card');
     let postedBadge = '';
 
@@ -284,13 +459,70 @@ function renderLiveDetails(state) {
     `;
 }
 
+function renderLiveDetailsForStep(stepIndex) {
+    if (!currentInvoiceState) return;
+
+    const card = document.getElementById('invoice-details-card');
+
+    // Find what steps have been completed up to stepIndex
+    const processedNodes = new Set();
+    for (let i = 0; i <= stepIndex; i++) {
+        if (currentTrail[i]) {
+            processedNodes.add(currentTrail[i].node_name);
+        }
+    }
+
+    let postedBadge = '';
+    if (processedNodes.has('Poster')) {
+        if (currentInvoiceState.posted_entry_id) {
+            postedBadge = `<div style="background: rgba(16, 185, 129, 0.2); border: 1px solid var(--success-green); color: var(--success-green); padding: 10px; border-radius: 6px; font-weight: 700; margin-top: 12px;">🏦 NetSuite Posted Transaction: ${currentInvoiceState.posted_entry_id}</div>`;
+        } else if (currentInvoiceState.human_decision === 'rejected') {
+            postedBadge = `<div style="background: rgba(239, 68, 68, 0.2); border: 1px solid var(--danger-red); color: var(--danger-red); padding: 10px; border-radius: 6px; font-weight: 700; margin-top: 12px;">❌ Posting Aborted: Human Rejected Entry</div>`;
+        }
+    }
+
+    let glSummary = '';
+    if (processedNodes.has('GL-Coder') && currentInvoiceState.extracted_fields && currentInvoiceState.extracted_fields.line_items) {
+        glSummary = currentInvoiceState.extracted_fields.line_items.map(item => `
+            <div style="font-size: 12px; display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <span>${item.description} ($${item.amount.toFixed(2)})</span>
+                <span style="font-family: var(--font-mono); color: var(--accent-cyan);">GL ${item.gl_account || 'Pending'} (${item.department || ''})</span>
+            </div>
+        `).join('');
+    } else if (currentInvoiceState.extracted_fields && currentInvoiceState.extracted_fields.line_items) {
+        glSummary = currentInvoiceState.extracted_fields.line_items.map(item => `
+            <div style="font-size: 12px; display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <span>${item.description} ($${item.amount.toFixed(2)})</span>
+                <span style="font-family: var(--font-mono); color: var(--text-muted);">GL Pending</span>
+            </div>
+        `).join('');
+    }
+
+    const vendor = processedNodes.has('Extractor') ? (currentInvoiceState.extracted_fields.vendor_name || 'N/A') : 'Parsing...';
+    const total = processedNodes.has('Extractor') ? `$${currentInvoiceState.extracted_fields.total_amount ? currentInvoiceState.extracted_fields.total_amount.toFixed(2) : '0.00'}` : 'Calculating...';
+
+    card.innerHTML = `
+        <h3 style="margin-bottom: 8px;">Live Shared State: ${currentInvoiceState.invoice_id}</h3>
+        <div style="font-size: 13px; margin-bottom: 8px;">Vendor: <strong>${vendor}</strong> | Total: <strong>${total}</strong></div>
+        <div style="margin-top: 12px;">
+            <h4 style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">GL Coded Line Items:</h4>
+            ${glSummary}
+        </div>
+        ${postedBadge}
+    `;
+}
+
 function updateStatusBadge(type, text) {
     const badge = document.getElementById('session-status-badge');
-    badge.className = `status-badge ${type}`;
-    badge.innerText = text;
+    if (badge) {
+        badge.className = `status-badge ${type}`;
+        badge.innerText = text;
+    }
 }
 
 function resetWorkflowUI() {
     document.querySelectorAll('.node-step').forEach(n => n.classList.remove('active', 'completed'));
+    document.querySelectorAll('.pipeline-connector').forEach(c => c.classList.remove('active', 'completed'));
+    document.querySelectorAll('.branch-connector').forEach(c => c.classList.remove('active', 'completed'));
     hideTriageDesk();
 }
