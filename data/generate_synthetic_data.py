@@ -4,6 +4,9 @@ import random
 from datetime import datetime, timedelta
 
 def generate_synthetic_dataset(num_invoices: int = 50):
+    # Seed so regeneration is deterministic/reproducible (the committed dataset
+    # predates this seed and is intentionally NOT regenerated here).
+    random.seed(42)
     data_dir = os.path.dirname(os.path.abspath(__file__))
     output_dir = os.path.join(data_dir, "synthetic_invoices")
     os.makedirs(output_dir, exist_ok=True)
@@ -23,12 +26,22 @@ def generate_synthetic_dataset(num_invoices: int = 50):
     with open(os.path.join(data_dir, "historical_invoices.json"), "w") as f:
         json.dump(historical_invoices, f, indent=2)
 
+    # Derive vendors from the canonical vendor_master.json so a generated invoice can
+    # never display an alias the agent doesn't know. Previously this list was hand-kept
+    # in parallel and drifted (e.g. "Apple Store" here vs "Apple Store for Business" in
+    # the master), which mismatched the substring matcher and produced spurious
+    # unknown_vendor routes that unfairly scored the agent down.
+    with open(os.path.join(data_dir, "vendor_master.json")) as f:
+        vendor_master = json.load(f)
     vendors = [
-        {"id": "VEND-1001", "name": "Amazon Web Services", "aliases": ["AWS", "Amazon Web Services Inc"], "gl": "6000", "po_req": False},
-        {"id": "VEND-1002", "name": "Staples Business Advantage", "aliases": ["Staples", "Staples Office Solutions"], "gl": "6100", "po_req": True},
-        {"id": "VEND-1003", "name": "Apex Consulting Group", "aliases": ["Apex Advisory Services"], "gl": "6200", "po_req": True},
-        {"id": "VEND-1004", "name": "Apple Hardware Direct", "aliases": ["Apple Inc", "Apple Store"], "gl": "7000", "po_req": True},
-        {"id": "VEND-1005", "name": "Acme Marketing Solutions", "aliases": ["Acme Ads"], "gl": "6500", "po_req": False}
+        {
+            "id": vm["vendor_id"],
+            "name": vm["name"],
+            "aliases": vm.get("aliases", []),
+            "gl": vm["default_gl_account"],
+            "po_req": vm.get("po_required", False),
+        }
+        for vm in vendor_master
     ]
 
     invoices = []
@@ -75,19 +88,24 @@ def generate_synthetic_dataset(num_invoices: int = 50):
         else:
             conf_score = round(random.uniform(0.92, 0.99), 2)
 
-        # Build line items
+        # Build line items that sum EXACTLY to total_amount (the last item absorbs the
+        # rounding remainder), preserving the scenario's intended total. The previous
+        # version re-divided each item and then overwrote total_amount with the smaller
+        # sum, which could drop a high_dollar_ceiling invoice below $5k and silently
+        # mislabel it as auto_post-eligible.
         line_qty = random.randint(1, 3)
-        unit_p = round(total_amount / line_qty, 2)
-        line_items = [
-            {
+        base = round(total_amount / line_qty, 2)
+        line_items = []
+        running = 0.0
+        for i in range(line_qty):
+            amt = round(total_amount - running, 2) if i == line_qty - 1 else base
+            running += amt
+            line_items.append({
                 "description": f"{v_info['name']} Service / Product Item #{i+1}",
                 "qty": 1,
-                "unit_price": unit_p if i == 0 else round(unit_p / line_qty, 2),
-                "amount": unit_p if i == 0 else round(unit_p / line_qty, 2)
-            } for i in range(line_qty)
-        ]
-        # Adjust total amount to sum of line items precisely
-        total_amount = sum(item["amount"] for item in line_items)
+                "unit_price": amt,
+                "amount": amt
+            })
 
         expected_route = "auto_post" if scenario == "clean_auto_post" else "human_review"
 
