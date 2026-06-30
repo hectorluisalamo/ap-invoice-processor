@@ -17,8 +17,8 @@ from google.adk.runners import InMemoryRunner
 from google.genai import types
 
 from ap_invoice_processor.graph import root_agent
+from ap_invoice_processor.hitl import is_paused_at_gate, build_resume_message, poster_ran
 
-HUMAN_GATE_INTERRUPT_ID = "human_triage"
 DATA_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     "data",
@@ -37,28 +37,6 @@ def _load_gated_invoice() -> dict:
     raise AssertionError("No gated (human_review) invoice found in dataset")
 
 
-def _is_paused_at_gate(event) -> bool:
-    return bool(
-        event.long_running_tool_ids
-        and HUMAN_GATE_INTERRUPT_ID in event.long_running_tool_ids
-    )
-
-
-def _resume_message(decision: str) -> types.Content:
-    return types.Content(
-        role="user",
-        parts=[
-            types.Part(
-                function_response=types.FunctionResponse(
-                    id=HUMAN_GATE_INTERRUPT_ID,
-                    name="adk_request_input",
-                    response={"decision": decision, "reasoning": f"integration test {decision}"},
-                )
-            )
-        ],
-    )
-
-
 async def _run_gated_with_decision(decision: str) -> dict:
     """Run a gated invoice to the human gate, resume with `decision`, return final state."""
     app = App(name="test_app", root_agent=root_agent)
@@ -73,7 +51,7 @@ async def _run_gated_with_decision(decision: str) -> dict:
     async for event in runner.run_async(
         user_id="test_user", session_id=session.id, new_message=start_msg
     ):
-        if _is_paused_at_gate(event):
+        if is_paused_at_gate(event):
             paused = True
             break
         if event.output and isinstance(event.output, dict) and "invoice_id" in event.output:
@@ -82,17 +60,13 @@ async def _run_gated_with_decision(decision: str) -> dict:
     assert paused, "Workflow did not pause at the human gate for a gated invoice"
 
     async for event in runner.run_async(
-        user_id="test_user", session_id=session.id, new_message=_resume_message(decision)
+        user_id="test_user", session_id=session.id, new_message=build_resume_message(decision, f"integration test {decision}")
     ):
         if event.output and isinstance(event.output, dict) and "invoice_id" in event.output:
             final_state = event.output
 
     assert final_state is not None, "No terminal state produced after resume"
     return final_state
-
-
-def _poster_ran(state: dict) -> bool:
-    return any(step.get("node_name") == "Poster" for step in state.get("decision_trail", []))
 
 
 def test_gated_invoice_approved_posts():
@@ -110,6 +84,6 @@ def test_gated_invoice_rejected_aborts():
     state = asyncio.run(_run_gated_with_decision("rejected"))
     assert state.get("human_decision") == "rejected"
     assert not state.get("posted_entry_id"), "Rejected invoice must NOT be posted"
-    assert _poster_ran(state), "Poster node should have run (to record the abort)"
+    assert poster_ran(state), "Poster node should have run (to record the abort)"
     poster_steps = [s for s in state["decision_trail"] if s["node_name"] == "Poster"]
     assert poster_steps[-1]["output_summary"].get("status") == "aborted"
