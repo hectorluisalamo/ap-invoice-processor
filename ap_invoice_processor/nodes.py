@@ -94,7 +94,7 @@ def extractor_node(ctx: Context, node_input: Any) -> Event:
     step = DecisionStep(
         step_index=len(invoice_state.decision_trail) + 1,
         node_name="Extractor",
-        action="Structured Vision & Entity Parsing",
+        action="Structured Field Extraction & Confidence Scoring",
         reasoning=f"Extracted vendor '{fields.vendor_name}', total ${fields.total_amount:.2f}, with average confidence {avg_conf:.2f}.",
         confidence=avg_conf,
         output_summary={
