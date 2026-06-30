@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btn-approve').addEventListener('click', () => submitTriage('approved'));
     document.getElementById('btn-reject').addEventListener('click', () => submitTriage('rejected'));
+    document.getElementById('btn-run-custom').addEventListener('click', startCustomWorkflowRun);
 });
 
 async function fetchInvoices() {
@@ -79,6 +80,51 @@ async function startWorkflowRun(invoiceId) {
         pollInterval = setInterval(pollSessionState, 800);
     } catch (e) {
         console.error('Error starting run:', e);
+        updateStatusBadge('idle', 'Error');
+    }
+}
+
+async function startCustomWorkflowRun() {
+    const vendor = document.getElementById('custom-vendor').value.trim();
+    const amountRaw = document.getElementById('custom-amount').value.trim();
+    const po = document.getElementById('custom-po').value.trim();
+    const lineItem = document.getElementById('custom-line-item').value.trim();
+    const errorBox = document.getElementById('custom-error');
+
+    const amount = parseFloat(amountRaw);
+    if (!vendor || !lineItem || !amountRaw || isNaN(amount) || amount <= 0) {
+        errorBox.innerText = 'Vendor name, a positive total amount, and a line-item description are required.';
+        errorBox.classList.remove('hidden');
+        return;
+    }
+    errorBox.classList.add('hidden');
+
+    // Deselect any pre-baked card so the UI reflects the custom run.
+    document.querySelectorAll('.invoice-item-card').forEach(c => c.classList.remove('active'));
+    currentInvoice = null;
+
+    resetWorkflowUI();
+    updateStatusBadge('running', 'Processing...');
+
+    try {
+        const res = await fetch('/api/run-custom', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                vendor_name: vendor,
+                total_amount: amount,
+                po_number: po || null,
+                line_item_description: lineItem
+            })
+        });
+        const data = await res.json();
+        activeSessionId = data.session_id;
+
+        lastRenderedTrailLen = -1; // reset so the new run's trail renders from scratch
+        if (pollInterval) clearInterval(pollInterval);
+        pollInterval = setInterval(pollSessionState, 800);
+    } catch (e) {
+        console.error('Error starting custom run:', e);
         updateStatusBadge('idle', 'Error');
     }
 }

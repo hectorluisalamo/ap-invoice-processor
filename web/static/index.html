@@ -53,6 +53,31 @@
                     <div class="loading-spinner">Loading synthetic test suite...</div>
                 </div>
 
+                <!-- Test Your Own Invoice -->
+                <div class="custom-invoice-card">
+                    <div class="panel-header">
+                        <h2>🧪 Test Your Own Invoice</h2>
+                        <span class="step-badge">Custom</span>
+                    </div>
+                    <p class="panel-desc">Submit your own invoice and watch it run through the same agent graph. ($5k+ or unknown vendor / bad PO routes to the Human Gate.)</p>
+                    <div class="custom-invoice-form">
+                        <label for="custom-vendor">Vendor name</label>
+                        <input type="text" id="custom-vendor" placeholder="e.g., Amazon Web Services">
+
+                        <label for="custom-amount">Total amount ($)</label>
+                        <input type="number" id="custom-amount" step="0.01" min="0" placeholder="e.g., 2450.00">
+
+                        <label for="custom-po">PO number</label>
+                        <input type="text" id="custom-po" placeholder="e.g., PO-8810 (optional)">
+
+                        <label for="custom-line-item">Line-item description</label>
+                        <input type="text" id="custom-line-item" placeholder="e.g., Cloud compute - June">
+
+                        <button id="btn-run-custom" class="btn btn-run">⚡ Run Custom Invoice</button>
+                        <div id="custom-error" class="custom-error hidden"></div>
+                    </div>
+                </div>
+
                 <div class="skill-box-card">
                     <div class="skill-header">
                         <span class="skill-icon">🧠</span>

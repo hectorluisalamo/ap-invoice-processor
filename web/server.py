@@ -1,6 +1,8 @@
 import os
 import json
 import asyncio
+import time
+from datetime import datetime
 from typing import Dict, Any, Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
@@ -84,9 +86,93 @@ async def get_session_state(session_id: str):
 class RunInvoiceRequest(BaseModel):
     invoice_id: str
 
+class RunCustomRequest(BaseModel):
+    vendor_name: str
+    total_amount: float
+    po_number: Optional[str] = None
+    line_item_description: str
+
 class HumanTriageRequest(BaseModel):
     decision: str  # "approved" or "rejected"
     reasoning: Optional[str] = None
+
+
+async def _start_invoice_run(invoice: dict) -> str:
+    """Create a fresh ADK session for an invoice payload, register it in
+    ACTIVE_SESSIONS, and kick off _execute_workflow. Shared by both the
+    pre-baked (/api/run) and custom (/api/run-custom) entry points so they run
+    through the identical session + workflow machinery. Returns the session id."""
+    invoice_id = invoice["id"]
+    session_id = f"sess_{invoice_id}_{int(asyncio.get_event_loop().time())}"
+
+    adk_session = await runner.session_service.create_session(
+        app_name="ap_copilot_app", user_id="demo_user"
+    )
+
+    ACTIVE_SESSIONS[session_id] = {
+        "session_id": session_id,
+        "adk_session_id": adk_session.id,
+        "invoice_id": invoice_id,
+        "status": "running",
+        "current_node": "START",
+        "invoice_state": None,
+        "is_paused_at_gate": False,
+        "interrupt_id": None
+    }
+
+    input_text = json.dumps(invoice)
+    start_msg = types.Content(role="user", parts=[types.Part.from_text(text=input_text)])
+    asyncio.create_task(_execute_workflow(session_id, adk_session.id, new_msg=start_msg))
+    return session_id
+
+
+def _build_custom_invoice(req: RunCustomRequest) -> dict:
+    """Synthesize a full invoice payload from simple tester inputs, matching the
+    exact shape intake_node expects (id + raw_text + simulated_extraction block).
+    Confidences are set HIGH (~0.97) so the low-confidence rail only fires when an
+    input legitimately trips a different policy check (ceiling, vendor, PO)."""
+    invoice_id = f"CUSTOM-{int(time.time())}"
+    amount = round(float(req.total_amount), 2)
+    po_number = req.po_number.strip() if req.po_number and req.po_number.strip() else None
+    date = datetime.now().strftime("%Y-%m-%d")
+
+    raw_text = (
+        f"INVOICE #{invoice_id}\n"
+        f"Vendor: {req.vendor_name}\n"
+        f"Date: {date}\n"
+        f"PO: {po_number or 'N/A'}\n"
+        f"Total: ${amount:.2f}"
+    )
+
+    line_item = {
+        "description": req.line_item_description,
+        "qty": 1,
+        "unit_price": amount,
+        "amount": amount,
+    }
+
+    return {
+        "id": invoice_id,
+        "test_case_type": "custom",
+        "description": "Tester-submitted custom invoice",
+        "raw_text": raw_text,
+        "simulated_extraction": {
+            "vendor_name": req.vendor_name,
+            "invoice_number": invoice_id,
+            "date": date,
+            "po_number": po_number,
+            "total_amount": amount,
+            "line_items": [line_item],
+            "confidence": {
+                "vendor_name": 0.97,
+                "invoice_number": 0.97,
+                "date": 0.97,
+                "total_amount": 0.97,
+                "line_items": 0.97,
+            },
+        },
+    }
+
 
 @web_app.post("/api/run")
 async def run_invoice(req: RunInvoiceRequest):
@@ -95,27 +181,15 @@ async def run_invoice(req: RunInvoiceRequest):
     if not selected:
         raise HTTPException(status_code=404, detail=f"Invoice {req.invoice_id} not found")
 
-    session_id = f"sess_{req.invoice_id}_{int(asyncio.get_event_loop().time())}"
-    
-    adk_session = await runner.session_service.create_session(
-        app_name="ap_copilot_app", user_id="demo_user"
-    )
-
-    ACTIVE_SESSIONS[session_id] = {
-        "session_id": session_id,
-        "adk_session_id": adk_session.id,
-        "invoice_id": req.invoice_id,
-        "status": "running",
-        "current_node": "START",
-        "invoice_state": None,
-        "is_paused_at_gate": False,
-        "interrupt_id": None
-    }
-
-    input_text = json.dumps(selected)
-    start_msg = types.Content(role="user", parts=[types.Part.from_text(text=input_text)])
-    asyncio.create_task(_execute_workflow(session_id, adk_session.id, new_msg=start_msg))
+    session_id = await _start_invoice_run(selected)
     return {"session_id": session_id, "status": "started"}
+
+
+@web_app.post("/api/run-custom")
+async def run_custom_invoice(req: RunCustomRequest):
+    invoice = _build_custom_invoice(req)
+    session_id = await _start_invoice_run(invoice)
+    return {"session_id": session_id, "status": "started", "invoice_id": invoice["id"]}
 
 async def _execute_workflow(session_id: str, adk_session_id: str, new_msg: types.Content = None):
     sess_info = ACTIVE_SESSIONS.get(session_id)
