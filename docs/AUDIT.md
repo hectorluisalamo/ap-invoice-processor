@@ -2,19 +2,21 @@
 
 AP Copilot was built and hardened across **four rounds** by two agentic tools — built fast with Google Antigravity, audited hard with Claude Code, then expanded again. This file is the honest record of what happened in each round, with the build artifacts preserved so the trail is verifiable rather than just asserted.
 
+The two pre-audit Antigravity rounds — whose specific technical claims were superseded by the independent audit that followed — are kept under [`historical/`](historical), preserved exactly as the tool produced them. The rounds that reflect the shipped system (the audit and the later feature expansion) sit at the top level of `docs/`.
+
 ## Round 1 — Initial build (Google Antigravity)
 
-The first implementation was built in Google Antigravity as a proof of concept. Its own artifacts are preserved, unedited, in [`round1_initial_build/`](round1_initial_build):
+The first implementation was built in Google Antigravity as a proof of concept. Its own artifacts are preserved, unedited, in [`historical/round1_initial_build/`](historical/round1_initial_build):
 
-- [`implementation_plan_v1.md`](round1_initial_build/implementation_plan_v1.md) — the plan Antigravity worked from.
-- [`walkthrough_v1.md`](round1_initial_build/walkthrough_v1.md) — Antigravity's summary of the POC build.
+- [`implementation_plan_v1.md`](historical/round1_initial_build/implementation_plan_v1.md) — the plan Antigravity worked from.
+- [`walkthrough_v1.md`](historical/round1_initial_build/walkthrough_v1.md) — Antigravity's summary of the POC build.
 
 ## Round 2 — Remediation attempt (Google Antigravity)
 
-After a first review flagged problems, Antigravity attempted fixes and reported them complete. Its artifacts are preserved, unedited, in [`round2_remediation/`](round2_remediation):
+After a first review flagged problems, Antigravity attempted fixes and reported them complete. Its artifacts are preserved, unedited, in [`historical/round2_remediation/`](historical/round2_remediation):
 
-- [`implementation_plan_v2.md`](round2_remediation/implementation_plan_v2.md)
-- [`walkthrough_v2.md`](round2_remediation/walkthrough_v2.md)
+- [`implementation_plan_v2.md`](historical/round2_remediation/implementation_plan_v2.md)
+- [`walkthrough_v2.md`](historical/round2_remediation/walkthrough_v2.md)
 
 **Two of round 2's reported fixes did not actually hold** — and the artifacts are kept as-authored precisely so that's on the record:
 
