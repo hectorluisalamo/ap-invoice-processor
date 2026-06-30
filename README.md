@@ -87,10 +87,9 @@ source .venv/bin/activate
 
 # Install pinned dependencies (includes the `mcp` package)
 pip install -r requirements.txt
-
-# Export Gemini API Key (required for LLM vision parsing)
-export GEMINI_API_KEY="your_gemini_api_key_here"
 ```
+
+> **No API key required.** The demo runs entirely on 100% synthetic data and makes no live LLM calls—the Extractor consumes pre-structured synthetic fields, so there is nothing to authenticate. Just install and run.
 
 ---
 
