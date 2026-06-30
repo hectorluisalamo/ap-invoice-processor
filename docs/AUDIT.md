@@ -1,6 +1,6 @@
 # Development & Audit Trail
 
-AP Copilot was built and hardened across **three rounds** by two different agentic tools — built fast with one, audited hard with another. This file is the honest record of what happened in each round, with the original build artifacts preserved so the trail is verifiable rather than just asserted.
+AP Copilot was built and hardened across **four rounds** by two agentic tools — built fast with Google Antigravity, audited hard with Claude Code, then expanded again. This file is the honest record of what happened in each round, with the build artifacts preserved so the trail is verifiable rather than just asserted.
 
 ## Round 1 — Initial build (Google Antigravity)
 
@@ -25,6 +25,11 @@ After a first review flagged problems, Antigravity attempted fixes and reported 
 
 A second Claude Code audit — the first had produced the blocker list that round 2 tried to address — went deeper: a multi-agent review (confidentiality, rules-compliance, security, writing, code/architecture) with a separate fresh-context agent re-running the system to verify every fix. It caught that round 2 was still broken, and did the real remediation that ships in this repo.
 
+Round 3 was an audit rather than a tool-authored build, so it produced no live plan/walkthrough of its own. To keep the per-round folder convention complete, a reconstructed pair — assembled from this file and the git history, and labeled as reconstructed — is preserved in [`round3_remediation/`](round3_remediation):
+
+- [`implementation_plan_v3.md`](round3_remediation/implementation_plan_v3.md)
+- [`walkthrough_v3.md`](round3_remediation/walkthrough_v3.md)
+
 ### What round 3 found and fixed
 
 | Area | After rounds 1–2 (Antigravity) | After round 3 (audit) |
@@ -45,6 +50,26 @@ After round 3, an independent fresh-context agent re-ran the full system and obs
 - `eval/eval_harness.py` → GL coding 82%, $14.50 → $1.75, 87.9% savings — reproduced.
 
 No claim in the final submission is left unbacked by code.
+
+## Round 4 — Feature expansion (Google Antigravity)
+
+After the audit, the project went back to Antigravity for a feature round focused on the demo surface. Its artifacts are preserved in [`round4_feature_expansion/`](round4_feature_expansion) — as-authored, except that absolute local filesystem paths were scrubbed to repo-relative links (the same confidentiality fix round 3 applied):
+
+- [`implementation_plan_v4.md`](round4_feature_expansion/implementation_plan_v4.md)
+- [`walkthrough_v4.md`](round4_feature_expansion/walkthrough_v4.md)
+- [`task_v4.md`](round4_feature_expansion/task_v4.md)
+
+What this round shipped:
+
+- **"Test Your Own Invoice" flow** — a custom-invoice form (`POST /api/run-custom`) that runs an arbitrary vendor/amount/PO/line-item through the same agent graph, so the policy rails (ceiling, unknown vendor, bad PO) can be exercised live, not just on the bundled scenarios.
+- **Branched, animated workflow graph** — the dashboard graph was rebuilt from a flat row into a true fork (auto-post bypass vs. Human Gate path), with nodes lighting up in sequence as each fires, so a viewer can watch the actual path an invoice takes.
+- **Rejection-lockout fix** — after a Human Gate rejection the UI had blocked selecting another invoice; polling/state are now released on every terminal state (`completed`, `aborted`, `error`).
+Folding this round into the trail also included a documentation-accuracy pass (Claude Code), separate from the Antigravity feature commits above:
+
+- **Dashboard ROI readout corrected** — round 3 standardized the ROI figure across the docs and eval ($14.50 → $1.75, 87.9%), but the live dashboard card had retained the older numbers ($2.36 / 83.7%); the card was brought in line with the single traceable model.
+- **Doc-accuracy fixes** — corrected stale claims a fresh review surfaced: the graph described as "linear" (it branches at the Policy-Validator), an Extractor described as live vision/LLM parsing (it reads pre-structured synthetic fields), the undocumented custom-invoice flow, and the undocumented unknown-vendor rail. The removed claim that a Gemini API key is required was also part of this pass — the demo is keyless.
+
+Verification: the eval harness and unit/integration suite continue to pass unchanged (the feature changes are front-end plus one additive endpoint; the documentation pass touched no agent logic), and the three smoke scenarios — clean auto-post, gated-approve, gated-reject — were re-run end to end on both the CLI and the web surfaces.
 
 ## Why this trail exists
 
