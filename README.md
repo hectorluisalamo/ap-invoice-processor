@@ -1,12 +1,12 @@
 # 🚀 AP Copilot — Autonomous Accounts Payable Agent
 
 **Kaggle Capstone Submission: 5-Day AI Agents Intensive Vibe Coding Course With Google**  
-*Track: Agents for Business | Framework: Google ADK 2.0 & Antigravity*
+*Track: Agents for Business | Framework: Google ADK 2.3.0 & Antigravity*
 
 [![CI](https://github.com/hectorluisalamo/ap-invoice-processor/actions/workflows/ci.yml/badge.svg)](https://github.com/hectorluisalamo/ap-invoice-processor/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
-![Built with Google ADK](https://img.shields.io/badge/Built%20with-Google%20ADK%202.0-4285F4?logo=google&logoColor=white)
+![Built with Google ADK](https://img.shields.io/badge/Built%20with-Google%20ADK%202.3.0-4285F4?logo=google&logoColor=white)
 ![MCP](https://img.shields.io/badge/MCP-enabled-FF6F00)
 ![Tests](https://img.shields.io/badge/tests-6%20passing-brightgreen)
 
@@ -16,7 +16,7 @@
 
 Manual Accounts Payable (AP) processing is an enterprise bottleneck costing organizations **$14.50+ per invoice** in labor, slow processing cycles, and risk of duplicate payments. 
 
-**AP Copilot** is an autonomous accounts-payable agent built on **Google Agent Development Kit (ADK 2.x, pinned to 2.3.0)** that automates invoice extraction, GL account coding, and ERP posting through a local **NetSuite MCP server**—with a **hard Human-in-the-Loop safety gate** on high-dollar or risky invoices. (All data is 100% synthetic; the NetSuite target is a mock ERP behind a real MCP interface.)
+**AP Copilot** is an autonomous accounts-payable agent built on **Google Agent Development Kit (ADK 2.3.0)** that automates invoice extraction, GL account coding, and ERP posting through a local **NetSuite MCP server**—with a **hard Human-in-the-Loop safety gate** on high-dollar or risky invoices. (All data is 100% synthetic; the NetSuite target is a mock ERP behind a real MCP interface.)
 
 ### 📈 Benchmark Performance & ROI Highlights (N=50 Synthetic Invoices)
 * **Autonomous Auto-Post Rate:** **44.0%** of routine invoices posted instantly with zero human intervention.
@@ -29,7 +29,7 @@ Manual Accounts Payable (AP) processing is an enterprise bottleneck costing orga
 
 ## 🏗️ System Architecture
 
-AP Copilot is structured as a branched 6-node ADK 2.0 `Workflow` graph—linear through extraction and validation, then forking at the Policy-Validator into an `auto_post` path or a `human_review` path—threading shared state (`InvoiceState`) and decision audit logs across every execution step:
+AP Copilot is structured as a branched 6-node ADK 2.3.0 `Workflow` graph—linear through extraction and validation, then forking at the Policy-Validator into an `auto_post` path or a `human_review` path—threading shared state (`InvoiceState`) and decision audit logs across every execution step:
 
 ```
 ┌──────────┐     ┌───────────┐     ┌──────────┐     ┌──────────────────┐
@@ -61,7 +61,7 @@ AP Copilot is structured as a branched 6-node ADK 2.0 `Workflow` graph—linear 
 
 Four concepts are implemented directly in code, plus Google Antigravity in the build/video—5 of the 6 named concepts (only Deployability is not claimed).
 
-1. **ADK 2.0 Workflow Multi-Agent Graph:** Built natively using `google.adk.workflow.Workflow`, `@node` decorators, and explicit conditional routing (`Edge(from_node=..., to_node=..., route=...)`).
+1. **ADK 2.3.0 Workflow Multi-Agent Graph:** Built natively using `google.adk.workflow.Workflow`, `@node` decorators, and explicit conditional routing (`Edge(from_node=..., to_node=..., route=...)`).
 2. **MCP Server:** A local **NetSuite MCP server** and client (`mcp_server/`)—the Poster node posts approved entries through the real MCP interface to a mock NetSuite ERP.
 3. **Agent Skill (`SKILL.md`):** Portable skill definition in `skills/ap_invoice_skill/SKILL.md` encapsulating GL mapping tables, keyword fallbacks, and policy thresholds, parsed dynamically at runtime.
 4. **Security & Human-in-the-Loop Safety Rails:** Hard **$5,000 auto-post dollar ceiling**, duplicate invoice prevention, and interactive `RequestInput` human gate.
@@ -132,7 +132,7 @@ PYTHONPATH=. pytest tests/
 ```text
 ap-invoice-processor/
 ├── ap_invoice_processor/    # Core ADK agent graph & node implementations
-│   ├── graph.py             # ADK 2.0 Workflow graph assembly & edges
+│   ├── graph.py             # ADK 2.3.0 Workflow graph assembly & edges
 │   ├── nodes.py             # Intake, Extractor, GL-Coder, Validator, Gate, Poster nodes
 │   ├── models.py            # Pydantic shared state models (InvoiceState, DecisionStep)
 │   └── skill_loader.py      # Portable SKILL.md rules loader
@@ -165,6 +165,6 @@ ap-invoice-processor/
 ## ⚖️ Development, Validation & License
 
 * **Development & Validation:** Built with Google Antigravity, then independently audited **twice** with Claude Code via a 5-agent review (confidentiality, rules-compliance, security, writing, and code/architecture).
-* **Commercial Tools Used:** Google Antigravity, Google Agent Development Kit (ADK 2.0), Claude Code, and the Gemini API.
+* **Commercial Tools Used:** Google Antigravity, Google Agent Development Kit (ADK 2.3.0), Claude Code, and the Gemini API.
 * **Data:** 100% synthetic—no real vendor, invoice, or financial data is used.
 * **License:** Code is licensed under the [Apache 2.0 License](LICENSE). Per competition terms, the submission content is offered under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).

@@ -1,9 +1,9 @@
 # AP Copilot: Autonomous Accounts Payable Processing with Human Gate Safety Rails
 
 **Track:** Agents for Business  
-**Submission Title:** AP Copilot — Branched ADK 2.0 Agent Graph for Autonomous Invoice Processing  
+**Submission Title:** AP Copilot — Branched ADK 2.3.0 Agent Graph for Autonomous Invoice Processing  
 **Author:** Hector Luis Alamo  
-**Frameworks Used:** Google Agent Development Kit (ADK 2.0), Google Antigravity, FastAPI, Pydantic  
+**Frameworks Used:** Google Agent Development Kit (ADK 2.3.0), Google Antigravity, FastAPI, Pydantic  
 
 ---
 
@@ -13,13 +13,13 @@ Accounts payable is where finance teams burn the most hours for the least credit
 
 OCR cleaned up the data-entry half of the job, but it didn't add judgment. A scanner can pull "$4,200.00" off a page; it can't decide that a Datadog charge belongs in Cloud Services, flag the invoice that's $300 over the PO, or refuse to post anything over five grand without a human signing off. That's the gap I built AP Copilot to close.
 
-**AP Copilot** runs invoices end to end — from raw intake to a NetSuite GL posting — on a **Google ADK 2.0** agent graph with a hard human gate on anything high-dollar or compliance-flagged. The agent does the grunt work, but a person still owns the decisions.
+**AP Copilot** runs invoices end to end — from raw intake to a NetSuite GL posting — on a **Google ADK 2.3.0** agent graph with a hard human gate on anything high-dollar or compliance-flagged. The agent does the grunt work, but a person still owns the decisions.
 
 ---
 
 ## 2. System Architecture
 
-AP Copilot is a branched six-node graph built on the **ADK 2.0 Workflow API** — linear through extraction and validation, then forking at the Policy-Validator into an `auto_post` or `human_review` path. Every node reads and writes one validated, immutable shared state (`InvoiceState`) and appends to a decision trail (`DecisionStep`), so I can replay exactly why the agent did what it did.
+AP Copilot is a branched six-node graph built on the **ADK 2.3.0 Workflow API** — linear through extraction and validation, then forking at the Policy-Validator into an `auto_post` or `human_review` path. Every node reads and writes one validated, immutable shared state (`InvoiceState`) and appends to a decision trail (`DecisionStep`), so I can replay exactly why the agent did what it did.
 
 ```text
 ┌──────────┐     ┌───────────┐     ┌──────────┐     ┌──────────────────┐
@@ -55,7 +55,7 @@ AP Copilot is a branched six-node graph built on the **ADK 2.0 Workflow API** �
 
 AP Copilot demonstrates **five of the six named concepts** — four in code, one in the build — leaving out only Deployability.
 
-### Concept 1: ADK 2.0 Workflow Multi-Agent Graph
+### Concept 1: ADK 2.3.0 Workflow Multi-Agent Graph
 Built on `google.adk.workflow.Workflow` with `@node` decorators and explicit conditional edges (`Edge(from_node=..., to_node=..., route=...)`). ADK handles event propagation and async state serialization across the graph.
 
 ### Concept 2: MCP Server (real, not a stub)
@@ -69,7 +69,7 @@ Financial agents move real money, so the controls are hard, not advisory. A $5,0
 
 ### Concept 5: Antigravity
 
-I built AP Copilot in Google Antigravity, and I got there by elimination. I first tried to build the whole thing in a general-purpose coding agent (Claude Code) on my laptop. Claude struggled, probably since ADK 2.0 and the Antigravity workflow aren't in its training; it stopped to research nearly every step, hit walls, and troubleshot its way forward — a slow-going process. I paused it and moved to Antigravity (the desktop app), which is purpose-built for exactly this stack.
+I built AP Copilot in Google Antigravity, and I got there by elimination. I first tried to build the whole thing in a general-purpose coding agent (Claude Code) on my laptop. Claude struggled, probably since ADK 2.3.0 and the Antigravity workflow aren't in its training; it stopped to research nearly every step, hit walls, and troubleshot its way forward — a slow-going process. I paused it and moved to Antigravity (the desktop app), which is purpose-built for exactly this stack.
 
 There the workflow was the opposite of a slog. I created a project, dropped in my `PLAN.md` and `BUILD.md` (created with Claude Code), and fed Antigravity my intent: "build a linear ADK agent graph: one invoice in → one posted GL entry out, with a human gate on anything risky." Antigravity produced an implementation plan ([`round1_initial_build/implementation_plan_v1.md`](round1_initial_build/implementation_plan_v1.md)) in under a minute; I reviewed and approved it, and the build followed.
 

@@ -37,7 +37,7 @@ Round 3 was an audit rather than a tool-authored build, so it produced no live p
 | **MCP Server** | A `random.randint()` stub; no MCP code, despite being claimed as a concept. | A real local NetSuite MCP server + client ([`mcp_server/`](../mcp_server)); the Poster posts the GL entry across the MCP protocol. |
 | **Demo / Human-in-the-Loop** | `state_delta`-based resume left both demos silently broken — the human decision never reached the Poster. | Resume rewired to the actual ADK 2.3.0 API (a `FunctionResponse` resume message): approve posts, reject aborts, end-to-end. |
 | **Test coverage** | 4 node-level unit tests; the broken resume path was untested, so it "passed CI" while failing in practice. | Added full-graph resume integration tests (approve → posted, reject → aborted). 6 tests pass. |
-| **Concept count** | "5 of 6" claimed while MCP wasn't real. | Genuinely 5 of 6 — four in code (ADK 2.0 graph, MCP, Agent Skill, Security/HITL) plus Antigravity. Only Deployability is not claimed. |
+| **Concept count** | "5 of 6" claimed while MCP wasn't real. | Genuinely 5 of 6 — four in code (ADK 2.3.0 graph, MCP, Agent Skill, Security/HITL) plus Antigravity. Only Deployability is not claimed. |
 | **ROI figures** | Inconsistent across docs ($12.88–$19.83 manual and ~$2.36 automated). | One traceable model: **$14.50 manual → $1.75 blended (87.9% savings)**, computed by [`eval/eval_harness.py`](../eval/eval_harness.py) over 50 synthetic invoices. |
 | **Confidentiality** | A local filesystem path and internal planning notes were committed to a public repo. | Path removed; internal strategy docs removed and scrubbed from history. |
 
