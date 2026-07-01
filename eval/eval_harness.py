@@ -106,7 +106,9 @@ async def run_evaluation():
     route_accuracy = (correct_route_count / total_invoices) * 100.0
     auto_post_rate = (auto_posted_count / total_invoices) * 100.0
 
-    # ROI Formula Calculations (from PLAN.md / BUILD.md)
+    # ROI Formula Calculations. Unit costs are STATED MODELING ASSUMPTIONS, adjustable here.
+    # manual baseline is a conservative mid-range of APQC/Ardent AP benchmarks; compute & triage
+    # are internal estimates. See "ROI methodology & assumptions" in README.md for sourcing.
     manual_cost_per_inv = 14.50
     ai_compute_cost_per_inv = 0.35
     human_triage_cost_per_inv = 2.50
