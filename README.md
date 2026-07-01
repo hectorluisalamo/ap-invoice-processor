@@ -14,7 +14,7 @@
 
 ## 💡 Executive Summary & ROI Value Proposition
 
-Manual Accounts Payable (AP) processing is an enterprise bottleneck costing organizations **$14.50+ per invoice** in labor, slow processing cycles, and risk of duplicate payments. 
+Manual Accounts Payable (AP) processing is an enterprise bottleneck. Independent benchmarks put the fully-loaded cost of processing a single invoice manually at **$10–$40**: APQC's 2024–2025 Open Standards data reports a **$21.40 median** (and **$10.18** for top-quartile organizations)[^apqc], while Ardent Partners' *AP Metrics That Matter (2025)* cites **$15–$40 for primarily-manual workflows** and a **$12.88 average** across non-best-in-class teams[^ardent]. This model uses a conservative mid-range **$14.50** manual baseline. 
 
 **AP Copilot** is an autonomous accounts-payable agent built on **Google Agent Development Kit (ADK 2.3.0)** that automates invoice extraction, GL account coding, and ERP posting through a local **NetSuite MCP server**—with a **hard Human-in-the-Loop safety gate** on high-dollar or risky invoices. (All data is 100% synthetic; the NetSuite target is a mock ERP behind a real MCP interface.)
 
@@ -24,6 +24,26 @@ Manual Accounts Payable (AP) processing is an enterprise bottleneck costing orga
 * **Safety Routing Accuracy:** **94.0%** of risky invoices correctly routed to a human reviewer.
 * **Blended Cost per Invoice:** Reduced from **$14.50** (manual baseline) to **$1.75** (blended compute + triage cost).
 * **Net Cost Reduction:** **87.9% Total Cost Savings**.
+
+> **ROI methodology & assumptions (read this before quoting the number).** The blended cost is **computed, not hardcoded** — it is driven by the *measured* auto-post rate from the N=50 eval run (`eval/eval_harness.py`), so it moves with the agent's actual performance. The formula is a standard blended cost-per-invoice:
+>
+> ```
+> blended = auto_post_rate × compute_cost + (1 − auto_post_rate) × (compute_cost + human_triage_cost)
+> savings% = (manual_cost − blended) / manual_cost
+> ```
+>
+> **Measured input:** `auto_post_rate = 44.0%` (share of the 50 synthetic invoices that cleared autonomously vs. routed to the human gate).
+> **Stated modeling assumptions** (unit costs; swap them for your own to re-scope the ROI):
+> | Parameter | Value | Basis |
+> |---|---|---|
+> | `manual_cost` | **$14.50 / invoice** | Conservative mid-range of the APQC / Ardent benchmarks cited above. |
+> | `compute_cost` | **$0.35 / invoice** | Estimated agent compute per invoice (the agent itself makes no live LLM/API calls — see the keyless note). |
+> | `human_triage_cost` | **$2.50 / invoice** | Estimated cost of a human reviewing one flagged invoice at the safety gate. |
+>
+> Worked: `0.44 × $0.35 + 0.56 × ($0.35 + $2.50) = $1.75`; savings `= ($14.50 − $1.75) / $14.50 = 87.9%`. The `compute_cost` and `human_triage_cost` figures are internal estimates, not benchmarked — they are exposed as constants at the top of the ROI block in `eval/eval_harness.py` so the model is fully transparent and adjustable.
+
+[^apqc]: APQC, *Total Cost to Perform the Process "Process Accounts Payable (AP)" per Invoice Processed*, Open Standards Benchmarking (2024–2025). https://www.apqc.org/resource-library/resource/total-cost-process-accounts-payable-invoice-processed
+[^ardent]: Ardent Partners, *Accounts Payable Metrics That Matter in 2025*. https://ardentpartners.com/ap-metrics-that-matter-in-2025/
 
 ---
 
