@@ -9,6 +9,15 @@
 ![Built with Google ADK](https://img.shields.io/badge/Built%20with-Google%20ADK%202.3.0-4285F4?logo=google&logoColor=white)
 ![MCP](https://img.shields.io/badge/MCP-enabled-FF6F00)
 ![Tests](https://img.shields.io/badge/tests-6%20passing-brightgreen)
+[![Watch the Demo](https://img.shields.io/badge/%E2%96%B6%20Watch-Demo%20Video-FF0000?logo=youtube&logoColor=white)](https://youtu.be/5spsyj1pMpY)
+
+---
+
+## 🎬 Demo (≤5 min)
+
+[![AP Copilot — full walkthrough](https://img.youtube.com/vi/5spsyj1pMpY/maxresdefault.jpg)](https://youtu.be/5spsyj1pMpY)
+
+▶️ **[Watch the full walkthrough on YouTube](https://youtu.be/5spsyj1pMpY)** — invoice intake → field extraction → GL-coding → the human safety gate → posting to a mock NetSuite ERP over a real MCP server.
 
 ---
 
