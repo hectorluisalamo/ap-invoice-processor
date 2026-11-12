@@ -10,3 +10,5 @@ scratch/
 .env
 *.env
 .vscode/
+# Claude Code per-user settings (can hold saved commands)
+.claude/settings.local.json
